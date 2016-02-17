@@ -1,0 +1,36 @@
+Mesh Properties
+10	 Float Length
+2	 Float Height
+2	 Float Width
+2	 Float Spacing
+0	 Water Depth
+1025.0	 Density
+150	 Number of Mesh Panels
+Nemoh Properties
+0.2	 Starting Frequency
+2.5	 Ending Frequency
+50	 Number of Frequency Steps
+False	 Include Wave direction?
+	 Starting wave direction
+	 Ending wave direction
+	 Number of wave direction steps
+False	 Include IRF?
+	 Duration of IRF
+	 Time step of IRF
+False	 Include Kochin Function?
+	 Start of Kochin Function
+	 End of Kochin Function
+	 Number of Kochin Steps
+False	 Include Wave Free Surface?
+	 Free Surface DeltaX
+	 Free Surface DeltaY
+	 Free Surface X-length
+	 Free Surface Y-length
+Time Domain Properties
+0	 Wave Type
+1.5	 Wave Height
+6	 Wave Period
+0	 Damping Type
+1000000	 Damping Value
+1000	 Simulation Time
+0.04	 Simulation Time Step

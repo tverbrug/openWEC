@@ -1,0 +1,36 @@
+Mesh Properties
+23	 Oyster Length
+9	 Oyster Height
+2	 Oyster Width
+4	 Oyster Height Above Sea Level
+13	 Water Depth
+1025.0	 Density
+150	 Number of Mesh Panels
+Nemoh Properties
+0.2	 Starting Frequency
+2.5	 Ending Frequency
+50	 Number of Frequency Steps
+False	 Include Wave direction?
+	 Starting wave direction
+	 Ending wave direction
+	 Number of wave direction steps
+True	 Include IRF?
+40	 Duration of IRF
+0.01	 Time step of IRF
+False	 Include Kochin Function?
+	 Start of Kochin Function
+	 End of Kochin Function
+	 Number of Kochin Steps
+False	 Include Wave Free Surface?
+	 Free Surface DeltaX
+	 Free Surface DeltaY
+	 Free Surface X-length
+	 Free Surface Y-length
+Time Domain Properties
+0	 Wave Type
+2	 Wave Height
+8	 Wave Period
+0	 Damping Type
+100000000	 Damping Value
+1000	 Simulation Time
+0.04	 Simulation Time Step
