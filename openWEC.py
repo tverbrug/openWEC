@@ -26,6 +26,21 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+class AnimatedButton(QtGui.QPushButton):
+
+    def UpdateIcon(self):
+        icon = QtGui.QIcon()
+        icon.addPixmap(self.iconMovie.currentPixmap())
+        self.setIcon(icon)
+
+    def __init__(self, movie, parent=None):
+        super(AnimatedButton, self).__init__(parent)
+
+        self.iconMovie = movie
+        self.iconMovie.start()
+
+        self.iconMovie.frameChanged.connect(self.UpdateIcon)
+
 class Ui_introScreen(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -52,7 +67,8 @@ class Ui_introScreen(QtGui.QMainWindow):
         self.label.setFont(font)
         self.label.setObjectName(_fromUtf8("label"))
         self.verticalLayout.addWidget(self.label)
-        self.wavestarButton = QtGui.QPushButton(self.centralwidget)
+        #self.wavestarButton = QtGui.QPushButton(self.centralwidget)
+        self.wavestarButton = AnimatedButton(movie=QtGui.QMovie("src/Animations/WS/WS.gif"),parent=self.centralwidget)
         self.wavestarButton.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
@@ -60,7 +76,6 @@ class Ui_introScreen(QtGui.QMainWindow):
         sizePolicy.setHeightForWidth(self.wavestarButton.sizePolicy().hasHeightForWidth())
         self.wavestarButton.setSizePolicy(sizePolicy)
         self.wavestarButton.setAutoFillBackground(False)
-        icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8("src/wavestar_icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.wavestarButton.setIcon(icon)
         self.wavestarButton.setIconSize(QtCore.QSize(120, 120))
@@ -68,7 +83,8 @@ class Ui_introScreen(QtGui.QMainWindow):
         self.wavestarButton.setFlat(False)
         self.wavestarButton.setObjectName(_fromUtf8("wavestarButton"))
         self.verticalLayout.addWidget(self.wavestarButton)
-        self.oysterButton = QtGui.QPushButton(self.centralwidget)
+        #self.oysterButton = QtGui.QPushButton(self.centralwidget)
+        self.oysterButton = AnimatedButton(movie=QtGui.QMovie("src/Animations/OY/OY.gif"),parent=self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -80,7 +96,8 @@ class Ui_introScreen(QtGui.QMainWindow):
         self.oysterButton.setIconSize(QtCore.QSize(120, 120))
         self.oysterButton.setObjectName(_fromUtf8("oysterButton"))
         self.verticalLayout.addWidget(self.oysterButton)
-        self.pelamisButton = QtGui.QPushButton(self.centralwidget)
+        #self.pelamisButton = QtGui.QPushButton(self.centralwidget)
+        self.pelamisButton = AnimatedButton(movie=QtGui.QMovie("src/Animations/PE/PE.gif"),parent=self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -92,7 +109,8 @@ class Ui_introScreen(QtGui.QMainWindow):
         self.pelamisButton.setIconSize(QtCore.QSize(120, 120))
         self.pelamisButton.setObjectName(_fromUtf8("pelamisButton"))
         self.verticalLayout.addWidget(self.pelamisButton)
-        self.customButton = QtGui.QPushButton(self.centralwidget)
+        #self.customButton = QtGui.QPushButton(self.centralwidget)
+        self.customButton = AnimatedButton(movie=QtGui.QMovie("src/Animations/CU/CU.gif"),parent=self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -126,7 +144,7 @@ class Ui_introScreen(QtGui.QMainWindow):
         self.oysterButton.clicked.connect(self.openOY)
         self.pelamisButton.setText(_translate("introScreen", "Pelamis Simulator", None))
         self.pelamisButton.clicked.connect(self.openPE)
-        self.customButton.setText(_translate("introScreen", "Custom", None))
+        self.customButton.setText(_translate("introScreen", "Custom Simulator", None))
         self.customButton.clicked.connect(self.openCU)
 
     def openWS(self):

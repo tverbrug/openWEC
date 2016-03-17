@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="300mm"
+   height="200mm"
+   viewBox="0 0 1062.9921 708.6614"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="oyster_anim.svg"
+   inkscape:export-filename="Z:\Doctoraat\WP5_Nemoh\openWEC-Python\src\Animations\WS\frame33.png"
+   inkscape:export-xdpi="200"
+   inkscape:export-ydpi="200">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-550.50027"
+     inkscape:cy="78.478972"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1148"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Laag 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-343.70079)">
+    <path
+       style="opacity:0.81099997;fill:#0067a1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m -4815.2981,537.27497 c 269.2764,-180.71519 587.9259,-55.62876 852.1231,57.28877 285.6813,116.69976 553.2434,-37.51242 812.9001,-130.46224 290.1386,-21.6415 532.1303,199.48481 825.7661,172.22645 329.106,43.54402 616.3213,-198.21849 947.9708,-133.75342 336.3794,75.85189 685.2959,180.78764 1030.9014,77.59602 C -26.472,430.49924 339.8491,465.11666 650.3386,620.27873 972.4314,785.7911 1317.832,612.63611 1632.9538,533.11612 1320.4954,610.53158 1218.6787,720.36977 883.644,704.95642 564.7863,667.54758 280.3746,438.11225 -55.1115,508.2078 c -321.5078,104.69684 -665.0792,185.47469 -1002.7374,96.56483 -330.0092,-139.90782 -697.5648,-93.30395 -1021.1315,37.23325 -293.1499,49.86687 -589.466,-11.29457 -857.4433,-131.09323 -286.5105,-129.59601 -514.4706,160.1197 -795.6561,141.0152 -310.3484,22.99913 -556.7616,-248.41213 -871.2189,-177.46529 -73.8267,8.17767 -145.7011,29.30263 -211.9994,62.81241 z"
+       id="path4166"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="Z:\Doctoraat\WP5_Nemoh\openWEC-Python\src\Animations\WS\frame22.png"
+       inkscape:export-xdpi="200"
+       inkscape:export-ydpi="200" />
+    <rect
+       style="opacity:1;fill:#4b4b4b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4148"
+       width="940"
+       height="20"
+       x="60"
+       y="1004.3622" />
+    <g
+       id="g4156"
+       inkscape:transform-center-x="0.031567251"
+       inkscape:transform-center-y="-290.00848">
+      <rect
+         y="472.36218"
+         x="480"
+         height="480"
+         width="80"
+         id="rect4150"
+         style="opacity:1;fill:#4b4b4b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4152"
+         d="m 480,952.36218 40,60.00002 40,-60.00002 z"
+         style="fill:#4b4b4b;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         transform="scale(1,-1)"
+         d="m 560.04468,-472.36008 a 40,40 0 0 1 -20.00061,34.64137 40,40 0 0 1 -40.0006,-0.001 40,40 0 0 1 -19.99879,-34.64241"
+         sodipodi:open="true"
+         sodipodi:end="3.141645"
+         sodipodi:start="0"
+         sodipodi:ry="40"
+         sodipodi:rx="40"
+         sodipodi:cy="-472.36008"
+         sodipodi:cx="520.04468"
+         sodipodi:type="arc"
+         id="path4154"
+         style="opacity:1;fill:#4b4b4b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>

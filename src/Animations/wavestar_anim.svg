@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="300mm"
+   height="200mm"
+   viewBox="0 0 1062.9921 708.6614"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="wavestar_anim.svg"
+   inkscape:export-filename="Z:\Doctoraat\WP5_Nemoh\openWEC-Python\src\Animations\WS\frame33.png"
+   inkscape:export-xdpi="200"
+   inkscape:export-ydpi="200">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="298.27163"
+     inkscape:cy="345.42451"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1148"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Laag 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-343.70079)">
+    <g
+       id="g4183"
+       transform="translate(-128,96)">
+      <rect
+         y="429.45227"
+         x="531.92444"
+         height="90"
+         width="90"
+         id="rect4138"
+         style="opacity:1;fill:#4b4b4b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <rect
+         y="519.29071"
+         x="341.99994"
+         height="21.607143"
+         width="460"
+         id="rect4140"
+         style="opacity:1;fill:#4b4b4b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <path
+         sodipodi:open="true"
+         d="M 801.99994,540.85315 A 230,220 0 0 1 686.99627,731.38076 230,220 0 0 1 456.9926,731.37469 230,220 0 0 1 341.99994,540.841"
+         sodipodi:end="3.1416479"
+         sodipodi:start="0"
+         sodipodi:ry="220"
+         sodipodi:rx="230"
+         sodipodi:cy="540.85315"
+         sodipodi:cx="571.99994"
+         sodipodi:type="arc"
+         id="path4142"
+         style="opacity:1;fill:#4b4b4b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    </g>
+    <path
+       style="fill:#4b4b4b;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 420.04999,577.81264 -3.47297,19.69618 520.18755,-70.74517 17.36483,-98.48077 z"
+       id="path4151"
+       inkscape:connector-curvature="0"
+       inkscape:transform-center-x="269.16451"
+       inkscape:transform-center-y="83.8333" />
+    <path
+       style="opacity:0.81099997;fill:#0067a1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m -2871.2981,801.27497 c 269.2764,-180.71519 587.9259,-55.62876 852.1231,57.28877 285.6813,116.69976 553.2434,-37.51242 812.9001,-130.46224 290.1386,-21.6415 532.1303,199.48481 825.7661,172.22645 329.106,43.54402 616.3213,-198.21849 947.9708,-133.75342 336.3794,75.85189 685.2959,180.78764 1030.9014,77.59602 319.1646,-149.67131 685.4857,-115.05389 995.9752,40.10818 322.0928,165.51237 667.4934,-7.64262 982.6152,-87.16261 -312.4584,77.41546 -414.2751,187.25365 -749.3098,171.8403 C 2508.7863,931.54758 2224.3746,702.11225 1888.8885,772.2078 1567.3807,876.90464 1223.8093,957.68249 886.1511,868.77263 556.1419,728.86481 188.5863,775.46868 -134.9804,906.00588 c -293.1499,49.86687 -589.466,-11.29457 -857.4433,-131.09323 -286.5105,-129.59601 -514.4706,160.1197 -795.6561,141.0152 -310.3484,22.99913 -556.7616,-248.41213 -871.2189,-177.46529 -73.8267,8.17767 -145.7011,29.30263 -211.9994,62.81241 z"
+       id="path4166"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="Z:\Doctoraat\WP5_Nemoh\openWEC-Python\src\Animations\WS\frame22.png"
+       inkscape:export-xdpi="200"
+       inkscape:export-ydpi="200" />
+  </g>
+</svg>

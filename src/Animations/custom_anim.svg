@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="300mm"
+   height="200mm"
+   viewBox="0 0 1062.9921 708.6614"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="custom_anim.svg"
+   inkscape:export-filename="Z:\Doctoraat\WP5_Nemoh\openWEC-Python\src\Animations\CU\frame32.png"
+   inkscape:export-xdpi="200"
+   inkscape:export-ydpi="200">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-533.70425"
+     inkscape:cy="37.724282"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1148"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Laag 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-343.70079)">
+    <path
+       style="opacity:0.81099997;fill:#0067a1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m -1217.2981,681.27497 c 269.2764,-180.71519 587.9259,-55.62876 852.1231,57.28877 285.6813,116.69976 553.2434,-37.51242 812.9001,-130.46224 290.1386,-21.6415 532.1303,199.48481 825.7661,172.22645 329.106,43.54402 616.3213,-198.21849 947.9708,-133.75342 336.3794,75.85189 685.2959,180.78764 1030.9014,77.59602 319.1646,-149.67131 685.4857,-115.05389 995.9752,40.10818 322.0928,165.51237 667.4934,-7.64262 982.6152,-87.16261 -312.4584,77.41546 -414.2751,187.25365 -749.3098,171.8403 C 4162.7863,811.54758 3878.3746,582.11225 3542.8885,652.2078 3221.3807,756.90464 2877.8093,837.68249 2540.1511,748.77263 2210.1419,608.86481 1842.5863,655.46868 1519.0196,786.00588 1225.8697,835.87275 929.5536,774.71131 661.5763,654.91265 375.0658,525.31664 147.1057,815.03235 -134.0798,795.92785 c -310.3484,22.99913 -556.7616,-248.41213 -871.2189,-177.46529 -73.8267,8.17767 -145.7011,29.30263 -211.9994,62.81241 z"
+       id="path4166"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="Z:\Doctoraat\WP5_Nemoh\openWEC-Python\src\Animations\WS\frame22.png"
+       inkscape:export-xdpi="200"
+       inkscape:export-ydpi="200" />
+    <g
+       id="g4241">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4231"
+         d="m 410.21453,574.96335 c -24.02835,-73.34928 38.66684,-129.94237 91.83918,-145.5607 73.33683,-27.39513 174.86664,-3.19006 213.80261,87.05898 28.91334,62.22083 -17.06498,111.20443 -53.49045,144.66508 -40.58847,40.88352 -85.47969,80.18632 -112.08431,135.36024 1.36241,28.27312 -5.63654,111.41184 -20.73609,44.36313 9.81507,-82.39978 78.61775,-125.39785 125.53631,-177.1351 68.30754,-40.77924 68.25958,-154.33866 -5.94707,-197.81404 -67.45633,-47.87909 -154.36452,-36.14605 -214.51444,10.79534 -23.12772,25.98141 1.46181,74.67248 -24.40574,98.26707 z"
+         style="opacity:1;fill:#4b4b4b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <circle
+         r="11.918779"
+         cy="900.03729"
+         cx="538.98981"
+         id="path4239"
+         style="opacity:1;fill:#4b4b4b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>
