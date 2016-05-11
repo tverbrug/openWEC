@@ -4,28 +4,20 @@
 0.0				! DEPTH			! M		! Water depth
 0.	0.			! XEFF YEFF		! M		! Wave measurement point
 --- Description of floating bodies ---
-2				! Number of bodies
+1				! Number of bodies
 --- Body 1 ---
-axisym1.dat			! Name of mesh file
-164	103			! Number of points and number of panels
+axisym.dat			! Name of mesh file
+680	170			! Number of points and number of panels
 1				! Number of degrees of freedom
-2 0. 1. 0. -6.000000 0. -0.500000		! Pitch about CdG
+1 0. 0. 1. 0. 0. 0.		! Heave
 1				! Number of resulting generalised forces
-2 0. 1. 0. -6.000000 0. -0.500000		! Pitch Moment about CdG
-0				! Number of lines of additional information
---- Body 2 ---
-axisym2.dat			! Name of mesh file
-164	103			! Number of points and number of panels
-1				! Number of degrees of freedom
-2 0. 1. 0. 6.000000 0. -0.500000		! Pitch about CdG
-1				! Number of resulting generalised forces
-2 0. 1. 0. 6.000000 0. -0.500000		! Pitch Moment about CdG
+1 0. 0. 1. 0. 0. 0.		! Force in Z direction
 0				! Number of lines of additional information
 --- Load cases to be solved ---
 50	0.2	2.5		! Number of wave frequencies, Min, and Max (rad/s)
 1	0.	0.		! Number of wave directions, Min and Max (degrees)
 --- Post processing ---
-0	0.01	20.		! IRF 				! IRF calculation (0 for no calculation), time step and duration
+1	0.01	40.0		! IRF 				! IRF calculation (0 for no calculation), time step and duration
 0				! Show pressure
 0	0.	180.		! Kochin function 		! Number of directions of calculation (0 for no calculations), Min and Max (degrees)
 0	2	1000.	2.	! Free surface elevation 	! Number of points in x direction (0 for no calcutions) and y direction and dimensions of domain in x and y direction	

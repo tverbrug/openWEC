@@ -1,0 +1,31 @@
+MoorDyn input file for OpenWEC mooring system
+---------------------- LINE DICTIONARY -----------------------------------------------------
+LineType  Diam    MassDenInAir    EA        BA/-zeta     Can     Cat    Cdn     Cdt 
+(-)       (m)       (kg/m)        (N)       (Pa-s/-)     (-)     (-)    (-)     (-)  
+main      0.40      50.0         200.0E6     1.0E8       1.0     0.0    1.6     0.05  
+---------------------- NODE PROPERTIES -----------------------------------------------------
+Node      Type      X        Y         Z        M        V        FX       FY      FZ     CdA   CA
+(-)       (-)      (m)      (m)       (m)      (kg)     (m^3)    (kN)     (kN)    (kN)   (m^2)  (-)
+1         Fix      853.87    0        -300      0        0        0        0       0       0     0
+2         Fix     -426.94   739.47    -300      0        0        0        0       0       0     0
+3         Fix     -426.94  -739.47    -300      0        0        0        0       0       0     0
+4         Vessel   5.2       0.0      -70       0        0        0        0       0       0     0
+5         Vessel  -2.6       4.5033   -70       0        0        0        0       0       0     0
+6         Vessel  -2.6      -4.5033   -70       0        0        0        0       0       0     0
+---------------------- LINE PROPERTIES -----------------------------------------------------
+Line     LineType  UnstrLen  NumSegs   NodeAnch  NodeFair  Flags/Outputs
+(-)      (-)       (m)         (-)       (-)       (-)       (-)
+1        main     902.2         10        1         4         p
+2        main     902.2         10        2         5         -
+3        main     902.2         10        3         6         -
+---------------------- SOLVER OPTIONS-----------------------------------------
+0.002    dtM          - time step to use in mooring integration
+0        WaveKin      - wave kinematics flag (0=neglect, the only option currently supported)
+3.0e0    kBot         - bottom stiffness
+3.0e0    cBot         - bottom damping
+300      WtrDpth      - water depth
+5.0      CdScaleIC    - factor by which to scale drag coefficients during dynamic relaxation IC gen
+0.001    threshIC     - threshold for IC convergence
+-------------------------- OUTPUTS --------------------------------
+FairTen1 FairTen2 FairTen3
+--------------------- need this line ------------------

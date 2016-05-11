@@ -70,6 +70,373 @@ class MyStaticMplCanvas(MyMplCanvas):
         s = [0,0]
         self.axes.plot(t, s)
 
+class MoorDynPopup(QtGui.QWidget):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
+        self.setupUi(self)
+    def __del__(self):
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+    def setupUi(self, Form):
+        Form.setObjectName(_fromUtf8("Form"))
+        Form.resize(1032, 849)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout(Form)
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.label = QtGui.QLabel(Form)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Arial"))
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout_3.addWidget(self.label)
+        self.horizontalLayout_3 = QtGui.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
+        self.pushButton_5 = QtGui.QPushButton(Form)
+        self.pushButton_5.setObjectName(_fromUtf8("pushButton_5"))
+        self.horizontalLayout_3.addWidget(self.pushButton_5)
+        self.pushButton = QtGui.QPushButton(Form)
+        self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.horizontalLayout_3.addWidget(self.pushButton)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
+        self.LineTypeTable = QtGui.QTableWidget(Form)
+        self.LineTypeTable.setObjectName(_fromUtf8("LineTypeTable"))
+        self.LineTypeTable.setColumnCount(9)
+        self.LineTypeTable.setRowCount(1)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setVerticalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(1, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(2, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(3, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(4, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(5, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(6, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(7, item)
+        item = QtGui.QTableWidgetItem()
+        self.LineTypeTable.setHorizontalHeaderItem(8, item)
+        self.verticalLayout_3.addWidget(self.LineTypeTable)
+        self.label_2 = QtGui.QLabel(Form)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Arial"))
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.verticalLayout_3.addWidget(self.label_2)
+        self.horizontalLayout_4 = QtGui.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
+        self.pushButton_7 = QtGui.QPushButton(Form)
+        self.pushButton_7.setObjectName(_fromUtf8("pushButton_7"))
+        self.horizontalLayout_4.addWidget(self.pushButton_7)
+        self.pushButton_6 = QtGui.QPushButton(Form)
+        self.pushButton_6.setObjectName(_fromUtf8("pushButton_6"))
+        self.horizontalLayout_4.addWidget(self.pushButton_6)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_4)
+        self.NodeTable = QtGui.QTableWidget(Form)
+        self.NodeTable.setObjectName(_fromUtf8("NodeTable"))
+        self.NodeTable.setColumnCount(11)
+        self.NodeTable.setRowCount(1)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setVerticalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(1, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(2, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(3, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(4, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(5, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(6, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(7, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(8, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(9, item)
+        item = QtGui.QTableWidgetItem()
+        self.NodeTable.setHorizontalHeaderItem(10, item)
+        self.verticalLayout_3.addWidget(self.NodeTable)
+        self.label_3 = QtGui.QLabel(Form)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Arial"))
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.verticalLayout_3.addWidget(self.label_3)
+        self.horizontalLayout_5 = QtGui.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
+        self.pushButton_9 = QtGui.QPushButton(Form)
+        self.pushButton_9.setObjectName(_fromUtf8("pushButton_9"))
+        self.horizontalLayout_5.addWidget(self.pushButton_9)
+        self.pushButton_8 = QtGui.QPushButton(Form)
+        self.pushButton_8.setObjectName(_fromUtf8("pushButton_8"))
+        self.horizontalLayout_5.addWidget(self.pushButton_8)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_5)
+        self.LinesTable = QtGui.QTableWidget(Form)
+        self.LinesTable.setObjectName(_fromUtf8("LinesTable"))
+        self.LinesTable.setColumnCount(6)
+        self.LinesTable.setRowCount(1)
+        item = QtGui.QTableWidgetItem()
+        self.LinesTable.setVerticalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.LinesTable.setHorizontalHeaderItem(0, item)
+        item = QtGui.QTableWidgetItem()
+        self.LinesTable.setHorizontalHeaderItem(1, item)
+        item = QtGui.QTableWidgetItem()
+        self.LinesTable.setHorizontalHeaderItem(2, item)
+        item = QtGui.QTableWidgetItem()
+        self.LinesTable.setHorizontalHeaderItem(3, item)
+        item = QtGui.QTableWidgetItem()
+        self.LinesTable.setHorizontalHeaderItem(4, item)
+        item = QtGui.QTableWidgetItem()
+        self.LinesTable.setHorizontalHeaderItem(5, item)
+        item = QtGui.QTableWidgetItem()
+        self.LinesTable.setItem(0, 1, item)
+        self.verticalLayout_3.addWidget(self.LinesTable)
+        self.horizontalLayout.addLayout(self.verticalLayout_3)
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetMaximumSize)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.pushButton_2 = QtGui.QPushButton(Form)
+        self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
+        self.verticalLayout.addWidget(self.pushButton_2)
+        self.pushButton_3 = QtGui.QPushButton(Form)
+        self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
+        self.verticalLayout.addWidget(self.pushButton_3)
+        self.pushButton_10 = QtGui.QPushButton(Form)
+        self.pushButton_10.setObjectName(_fromUtf8("pushButton_10"))
+        self.verticalLayout.addWidget(self.pushButton_10)
+        self.pushButton_4 = QtGui.QPushButton(Form)
+        self.pushButton_4.setObjectName(_fromUtf8("pushButton_4"))
+        self.verticalLayout.addWidget(self.pushButton_4)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
+        self.horizontalLayout.addLayout(self.verticalLayout)
+        self.horizontalLayout_2.addLayout(self.horizontalLayout)
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(_translate("Form", "MoorDyn Configuration", None))
+        self.label.setText(_translate("Form", "Line Type", None))
+        self.pushButton_5.setText(_translate("Form", "Add Line Type", None))
+        self.pushButton_5.clicked.connect(lambda: self.addremLine(self.LineTypeTable,1))
+        self.pushButton.setText(_translate("Form", "Remove Line Type", None))
+        self.pushButton.clicked.connect(lambda: self.addremLine(self.LineTypeTable,-1))
+        item = self.LineTypeTable.verticalHeaderItem(0)
+        item.setText(_translate("Form", "1", None))
+        item = self.LineTypeTable.horizontalHeaderItem(0)
+        item.setText(_translate("Form", "Name", None))
+        item = self.LineTypeTable.horizontalHeaderItem(1)
+        item.setText(_translate("Form", "Diameter", None))
+        item = self.LineTypeTable.horizontalHeaderItem(2)
+        item.setText(_translate("Form", "Mass Density", None))
+        item = self.LineTypeTable.horizontalHeaderItem(3)
+        item.setText(_translate("Form", "Line Stifness", None))
+        item = self.LineTypeTable.horizontalHeaderItem(4)
+        item.setText(_translate("Form", "Internal Damping", None))
+        item = self.LineTypeTable.horizontalHeaderItem(5)
+        item.setText(_translate("Form", "Can", None))
+        item = self.LineTypeTable.horizontalHeaderItem(6)
+        item.setText(_translate("Form", "Cat", None))
+        item = self.LineTypeTable.horizontalHeaderItem(7)
+        item.setText(_translate("Form", "Cdn", None))
+        item = self.LineTypeTable.horizontalHeaderItem(8)
+        item.setText(_translate("Form", "Cdt", None))
+        self.label_2.setText(_translate("Form", "Nodes", None))
+        self.pushButton_7.setText(_translate("Form", "Add Node", None))
+        self.pushButton_7.clicked.connect(lambda: self.addremLine(self.NodeTable,1))
+        self.pushButton_6.setText(_translate("Form", "Remove Node", None))
+        self.pushButton_6.clicked.connect(lambda: self.addremLine(self.NodeTable,-1))
+        item = self.NodeTable.verticalHeaderItem(0)
+        item.setText(_translate("Form", "1", None))
+        item = self.NodeTable.horizontalHeaderItem(0)
+        item.setText(_translate("Form", "Type", None))
+        item = self.NodeTable.horizontalHeaderItem(1)
+        item.setText(_translate("Form", "X", None))
+        item = self.NodeTable.horizontalHeaderItem(2)
+        item.setText(_translate("Form", "Y", None))
+        item = self.NodeTable.horizontalHeaderItem(3)
+        item.setText(_translate("Form", "Z", None))
+        item = self.NodeTable.horizontalHeaderItem(4)
+        item.setText(_translate("Form", "Mass", None))
+        item = self.NodeTable.horizontalHeaderItem(5)
+        item.setText(_translate("Form", "Volume", None))
+        item = self.NodeTable.horizontalHeaderItem(6)
+        item.setText(_translate("Form", "Fx", None))
+        item = self.NodeTable.horizontalHeaderItem(7)
+        item.setText(_translate("Form", "Fy", None))
+        item = self.NodeTable.horizontalHeaderItem(8)
+        item.setText(_translate("Form", "Fz", None))
+        item = self.NodeTable.horizontalHeaderItem(9)
+        item.setText(_translate("Form", "CdA", None))
+        item = self.NodeTable.horizontalHeaderItem(10)
+        item.setText(_translate("Form", "CA", None))
+        self.label_3.setText(_translate("Form", "Lines", None))
+        self.pushButton_9.setText(_translate("Form", "Add Line", None))
+        self.pushButton_9.clicked.connect(lambda: self.addremLine(self.LinesTable,1))
+        self.pushButton_8.setText(_translate("Form", "Remove Line", None))
+        self.pushButton_8.clicked.connect(lambda: self.addremLine(self.LinesTable,-1))
+        item = self.LinesTable.verticalHeaderItem(0)
+        item.setText(_translate("Form", "1", None))
+        item = self.LinesTable.horizontalHeaderItem(0)
+        item.setText(_translate("Form", "Type", None))
+        item = self.LinesTable.horizontalHeaderItem(1)
+        item.setText(_translate("Form", "Unstretched Length", None))
+        item = self.LinesTable.horizontalHeaderItem(2)
+        item.setText(_translate("Form", "# Segments", None))
+        item = self.LinesTable.horizontalHeaderItem(3)
+        item.setText(_translate("Form", "Anchor Node", None))
+        item = self.LinesTable.horizontalHeaderItem(4)
+        item.setText(_translate("Form", "Vessel Node", None))
+        item = self.LinesTable.horizontalHeaderItem(5)
+        item.setText(_translate("Form", "Output?", None))
+        __sortingEnabled = self.LinesTable.isSortingEnabled()
+        self.LinesTable.setSortingEnabled(False)
+        self.LinesTable.setSortingEnabled(__sortingEnabled)
+        self.pushButton_2.setText(_translate("Form", "Open Lines File", None))
+        self.pushButton_2.clicked.connect(self.openLinesFile)
+        self.pushButton_3.setText(_translate("Form", "Save Lines File", None))
+        self.pushButton_3.clicked.connect(self.saveLinesFile)
+        self.pushButton_10.setText(_translate("Form", "Manual", None))
+        self.pushButton_10.clicked.connect(self.openMdManual)
+        self.pushButton_4.setText(_translate("Form", "Cancel", None))
+        self.pushButton_4.clicked.connect(self.close)
+        
+    def addremLine(self,table,ltype):
+        rowC = table.rowCount()
+        if ltype > 0:
+            table.setRowCount(rowC+1)
+        else:
+            if table.currentRow() > -1:
+                row = table.currentRow()
+                table.removeRow(row)
+            else:
+                table.setRowCount(rowC-1)
+        
+    def openMdManual(self):
+        os.chdir('Mooring')
+        if sys.platform == 'linux2':
+            os.system('xdg-open','MoorDyn_Manual.pdf')
+        else:
+            os.startfile('MoorDyn_Manual.pdf')
+        os.chdir('..')
+        
+    def openLinesFile(self):
+        sys.path.insert(0, './Run')
+        import moorSim as ms        
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', 
+                        './Mooring','*.txt')
+        mdLines = ms.openLines(fname)
+        # Line types
+        self.LineTypeTable.setRowCount(mdLines['nrLineTypes'])
+        for iL in range(mdLines['nrLineTypes']):
+            for iC in range(len(mdLines['linetype_{:d}'.format(iL+1)])):
+                text = mdLines['linetype_{:d}'.format(iL+1)][iC]
+                self.LineTypeTable.setItem(iL, iC, QtGui.QTableWidgetItem(text))
+                
+        # Nodes
+        self.NodeTable.setRowCount(mdLines['nrNodes'])
+        for iL in range(mdLines['nrNodes']):
+            for iC in range(len(mdLines['node_{:d}'.format(iL+1)])):
+                text = mdLines['node_{:d}'.format(iL+1)][iC]
+                self.NodeTable.setItem(iL, iC, QtGui.QTableWidgetItem(text))
+                
+        # Lines
+        self.LinesTable.setRowCount(mdLines['nrLines'])
+        for iL in range(mdLines['nrLines']):
+            for iC in range(len(mdLines['line_{:d}'.format(iL+1)])):
+                text = mdLines['line_{:d}'.format(iL+1)][iC]
+                self.LinesTable.setItem(iL, iC, QtGui.QTableWidgetItem(text))
+                
+    def saveLinesFile(self):
+        linesFile = ['']
+        depth = 0.0
+        
+        # Header
+        linesFile.append('MoorDyn input file for OpenWEC mooring system\n')
+        
+        # Line Dictionary
+        linesFile.append('---------------------- LINE DICTIONARY -----------------------------------------------------\n')
+        linesFile.append('LineType  Diam    MassDenInAir    EA        BA/-zeta     Can     Cat    Cdn     Cdt\n')
+        linesFile.append('(-)       (m)       (kg/m)        (N)       (Pa-s/-)     (-)     (-)    (-)     (-)\n')
+        for iR in range(self.LineTypeTable.rowCount()):
+            line = ''
+            for iC in range(self.LineTypeTable.columnCount()):
+                line = line + self.LineTypeTable.item(iR,iC).text() + '\t'
+            line = line + '\n'
+            linesFile.append(line)
+            
+        # Nodes
+        linesFile.append('---------------------- NODE PROPERTIES -----------------------------------------------------\n')
+        linesFile.append('Node      Type      X        Y         Z        M        V        FX       FY      FZ     CdA   CA\n')
+        linesFile.append('(-)       (-)      (m)      (m)       (m)      (kg)     (m^3)    (kN)     (kN)    (kN)   (m^2)  (-)\n')
+        for iR in range(self.NodeTable.rowCount()):
+            line = '{:d}\t'.format(iR+1)
+            for iC in range(self.NodeTable.columnCount()):
+                line = line + self.NodeTable.item(iR,iC).text() + '\t'
+                if iC==3:
+                    depthT = -1.0*float(self.NodeTable.item(iR,iC).text())
+                    if depthT > depth:
+                        depth = depthT
+            line = line + '\n'
+            linesFile.append(line)
+            
+        # Lines
+        linesFile.append('---------------------- LINE PROPERTIES -----------------------------------------------------\n')
+        linesFile.append('Line     LineType  UnstrLen  NumSegs   NodeAnch  NodeFair  Flags/Outputs\n')
+        linesFile.append('(-)      (-)       (m)         (-)       (-)       (-)       (-)\n')
+        for iR in range(self.LinesTable.rowCount()):
+            line = '{:d}\t'.format(iR+1)
+            for iC in range(self.LinesTable.columnCount()):
+                line = line + self.LinesTable.item(iR,iC).text() + '\t'
+            line = line + '\n'
+            linesFile.append(line)
+        
+        # Solver Options
+        linesFile.append('---------------------- SOLVER OPTIONS-----------------------------------------\n')
+        linesFile.append('0.002    dtM          - time step to use in mooring integration\n')
+        linesFile.append('0        WaveKin      - wave kinematics flag (0=neglect, the only option currently supported)\n')
+        linesFile.append('3.0e0    kBot         - bottom stiffness\n')
+        linesFile.append('3.0e0    cBot         - bottom damping\n')
+        linesFile.append('{:f}      WtrDpth      - water depth\n'.format(depth))
+        linesFile.append('5.0      CdScaleIC    - factor by which to scale drag coefficients during dynamic relaxation IC gen\n')
+        linesFile.append('0.001    threshIC     - threshold for IC convergence\n')
+        linesFile.append('-------------------------- OUTPUTS --------------------------------\n')
+        linesFile.append('FairTen1 FairTen2 FairTen3\n')
+        linesFile.append('--------------------- need this line ------------------\n')
+        
+        # Write file
+        with open('Mooring/lines.txt','w') as f:
+            f.writelines(linesFile)
+        print('Lines file succesfully written!\n')
+        
+    def close(self):
+        self.hide()
+        
 class Ui_MainWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -632,8 +999,28 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.fdampBox = QtGui.QLineEdit(self.tabSim)
         self.fdampBox.setObjectName(_fromUtf8("fdampBox"))
         self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.fdampBox)
+        
+        verticalSpacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.formLayout.setItem(8, QtGui.QFormLayout.LabelRole, verticalSpacer)        
+        self.moorPropLabel = QtGui.QLabel(self.tabSim)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Arial"))
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.moorPropLabel.setFont(font)
+        self.moorPropLabel.setObjectName(_fromUtf8("moorPropLabel"))
+        self.formLayout.setWidget(9, QtGui.QFormLayout.LabelRole, self.moorPropLabel)
+        self.moorCheck = QtGui.QCheckBox(self.tabSim)
+        self.moorCheck.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.moorCheck.setObjectName(_fromUtf8("moorCheck"))
+        self.formLayout.setWidget(10, QtGui.QFormLayout.LabelRole, self.moorCheck)
+        self.moorConfig = QtGui.QPushButton(self.tabSim)
+        self.moorConfig.setObjectName(_fromUtf8("moorConfig"))
+        self.formLayout.setWidget(10, QtGui.QFormLayout.FieldRole, self.moorConfig)
+        
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.formLayout.setItem(8, QtGui.QFormLayout.LabelRole, spacerItem1)
+        self.formLayout.setItem(11, QtGui.QFormLayout.LabelRole, spacerItem1)
         self.simProp = QtGui.QLabel(self.tabSim)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Arial"))
@@ -642,31 +1029,31 @@ class Ui_MainWindow(QtGui.QMainWindow):
         font.setWeight(75)
         self.simProp.setFont(font)
         self.simProp.setObjectName(_fromUtf8("simProp"))
-        self.formLayout.setWidget(9, QtGui.QFormLayout.LabelRole, self.simProp)
+        self.formLayout.setWidget(12, QtGui.QFormLayout.LabelRole, self.simProp)
         self.simTimeLabel = QtGui.QLabel(self.tabSim)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Raleway"))
         self.simTimeLabel.setFont(font)
         self.simTimeLabel.setObjectName(_fromUtf8("simTimeLabel"))
-        self.formLayout.setWidget(10, QtGui.QFormLayout.LabelRole, self.simTimeLabel)
+        self.formLayout.setWidget(13, QtGui.QFormLayout.LabelRole, self.simTimeLabel)
         self.simTimeBox = QtGui.QLineEdit(self.tabSim)
         self.simTimeBox.setObjectName(_fromUtf8("simTimeBox"))
-        self.formLayout.setWidget(10, QtGui.QFormLayout.FieldRole, self.simTimeBox)
+        self.formLayout.setWidget(13, QtGui.QFormLayout.FieldRole, self.simTimeBox)
         self.dtLabel = QtGui.QLabel(self.tabSim)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Raleway"))
         self.dtLabel.setFont(font)
         self.dtLabel.setObjectName(_fromUtf8("dtLabel"))
-        self.formLayout.setWidget(11, QtGui.QFormLayout.LabelRole, self.dtLabel)
+        self.formLayout.setWidget(14, QtGui.QFormLayout.LabelRole, self.dtLabel)
         self.dtBox = QtGui.QLineEdit(self.tabSim)
         self.dtBox.setObjectName(_fromUtf8("dtBox"))
-        self.formLayout.setWidget(11, QtGui.QFormLayout.FieldRole, self.dtBox)
+        self.formLayout.setWidget(14, QtGui.QFormLayout.FieldRole, self.dtBox)
         self.simButton = QtGui.QPushButton(self.tabSim)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Raleway"))
         self.simButton.setFont(font)
         self.simButton.setObjectName(_fromUtf8("simButton"))
-        self.formLayout.setWidget(12, QtGui.QFormLayout.FieldRole, self.simButton)
+        self.formLayout.setWidget(15, QtGui.QFormLayout.FieldRole, self.simButton)
         self.gridLayout_4.addLayout(self.formLayout, 0, 0, 1, 1)
         self.verticalLayout_5 = QtGui.QVBoxLayout()
         self.verticalLayout_5.setObjectName(_fromUtf8("verticalLayout_5"))
@@ -701,6 +1088,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         self.gridLayout_4.addLayout(self.verticalLayout_5, 0, 1, 1, 1)
         self.tabWidget.addTab(self.tabSim, _fromUtf8(""))
+        # Postprocessing tab
         self.tabPost = QtGui.QWidget()
         self.tabPost.setObjectName(_fromUtf8("tabPost"))
         self.gridLayout_5 = QtGui.QGridLayout(self.tabPost)
@@ -1050,6 +1438,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.dampSelect.setItemText(0, _translate("openWEC", "Linear", None))
         self.dampSelect.setItemText(1, _translate("openWEC", "Coulomb", None))
         self.fdampBox.setPlaceholderText(_translate("MainWindow", "in N for Coulomb, in kg/s for Linear", None))
+        self.moorPropLabel.setText(_translate("openWEC", "Mooring Properties", None))
+        self.moorCheck.setText(_translate("openWEC", "Enable Mooring Lines", None))
+        self.moorCheck.clicked.connect(self.changeMoorDyn)
+        self.moorConfig.setText(_translate("openWEC", "Configure...", None))
+        self.moorConfig.clicked.connect(self.runMoorDynConfig)
+        self.moorConfig.setEnabled(False)
         self.simProp.setText(_translate("MainWindow", "Simulation", None))
         self.simTimeLabel.setText(_translate("MainWindow", "Time:", None))
         self.simTimeBox.setPlaceholderText(_translate("MainWindow", "in seconds", None))
@@ -1718,15 +2112,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         if (wavType==0):
             if sum(dof)<2:
-                self.time,self.posZ,self.velZ,self.Fpto = wc.simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd)
+                self.time,self.posZ,self.velZ,self.Fpto = wc.simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd,moor=self.moorCheck.isChecked(),dof=dof)
             else:
-                self.time,self.posZ,self.velZ = wc.simBodyReg(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd)
+                self.time,self.posZ,self.velZ = wc.simBodyReg(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd,moor=self.moorCheck.isChecked(),dof=dof)
                 self.Fpto = self.velZ*0.0
         else:
             if sum(dof)<2:
-                self.time,self.posZ,self.velZ,self.Fpto = wc.simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta)
+                self.time,self.posZ,self.velZ,self.Fpto = wc.simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta,moor=self.moorCheck.isChecked(),dof=dof)
             else:
-                self.time,self.posZ,self.velZ = wc.simBody(time,Fex,Fdamp,dampType,M,MaS,BhydS,c,alpha,beta)
                 self.Fpto = self.velZ*0.0
         
         print('Simulation Finished!')
@@ -2125,6 +2518,17 @@ class Ui_MainWindow(QtGui.QMainWindow):
         cursor.insertText(text)
         self.postMessBox.setTextCursor(cursor)
         self.postMessBox.ensureCursorVisible()
+
+    def runMoorDynConfig(self):
+        print "Opening MoorDyn Configuration Tool..."
+        self.w = MoorDynPopup()
+        self.w.show()
+        
+    def changeMoorDyn(self):
+        if self.moorCheck.isChecked():
+            self.moorConfig.setEnabled(True)
+        else:
+            self.moorConfig.setEnabled(False)
 
 def openCustom():
     ex2 = Ui_MainWindow()

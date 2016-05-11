@@ -7,11 +7,11 @@ Created on Thu Feb 12 17:01:56 2015
 
 import scipy.integrate  as sci
 import numpy as np
+import moorSim as ms
 
 
-def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta):
+def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta,moor=False,dof=[0,0,1,0,0,0]):
     
-  
     # Initial Conditions
     y0 = [0.0, 0.0]
     arg_f = [M,Mainf,c,Fex[0],0.0]
@@ -22,6 +22,7 @@ def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta):
         arg_f.append(alpha[iA])
     for iA in range(0,len(alpha)):
         arg_f.append(beta[iA])
+    arg_f.append(0.0)                                   # Placeholder for optional mooring force
        
     t0 = time[0]    
     
@@ -34,7 +35,7 @@ def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta):
         for iB in range(0,len(rhs)-2):
             I = I + '-y[' + str(2+iB) + ']'
             rhs[iB+2] = args[iB+(len(args)-5)/2+5]*y[iB+2]+args[iB+5]*y[1]
-        rhs[1] = eval('(args[3]-args[4]-args[2]*y[0]' + I + ')/(args[0]+args[1])')
+        rhs[1] = eval('(args[3]-args[4]-args[-1]-args[2]*y[0]' + I + ')/(args[0]+args[1])')
         return rhs
 
     def fL(t, y, args):
@@ -45,7 +46,7 @@ def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta):
         for iB in range(0,len(rhs)-2):
             I = I + '-y[' + str(2+iB) + ']'
             rhs[iB+2] = args[iB+(len(args)-5)/2+5]*y[iB+2]+args[iB+5]*y[1]
-        rhs[1] = eval('(args[3]-args[4]*y[1]-args[2]*y[0]' + I + ')/(args[0]+args[1])')
+        rhs[1] = eval('(args[3]-args[-1]-args[4]*y[1]-args[2]*y[0]' + I + ')/(args[0]+args[1])')
         return rhs
 
     # Define Tuning
@@ -82,6 +83,11 @@ def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta):
     tim = np.zeros(len(time))
     iF = 0
     
+    # Set-up Mooring
+    if moor:
+        moorLib = ms.simLinesInit()
+    
+    # Time integration    
     while r.successful() and r.t < t1:
         r.integrate(r.t+dt)
         z[iF] = r.y[0]
@@ -94,12 +100,20 @@ def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta):
             dummy = ptoForce(r,Fdamp,Fex[iF],c)
             arg_f[4] = dummy
             Fp[iF] = dummy
+        if moor:
+            arg_f[-1] = 0.1 * ms.simLines(moorLib,z[iF],v[iF],tim[iF],dt,dof)
+            #print('{:f}'.format(test))
         r.set_f_params(arg_f)
         iF = iF + 1
+        
+    # Close Mooring
+    if moor:
+        ms.simClose(moorLib)
+        del moorLib
     
     return tim,z,v,Fp
 
-def simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd):
+def simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd,moor=False,dof=[0,0,1,0,0,0]):
     
     # Ramp function for Fex
     ramp = 0.5*(1+np.tanh(2*np.pi/10.0*time-np.pi))
@@ -110,6 +124,7 @@ def simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd):
     arg_f = [M,c,Ma,Bhyd,Fex[0],0.0]
     if dampType == 0:
         arg_f[5] = Fdamp
+    arg_f.append(0.0)                                   # Placeholder for optional mooring force
 
     t0 = time[0]    
 
@@ -117,13 +132,13 @@ def simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd):
     def fC(t, y, args):
         rhs = [0]*2       
         rhs[0] = y[1]
-        rhs[1] = (args[4] - args[3]*y[1] - args[5] - args[1]*y[0])/(args[0] + args[2])
+        rhs[1] = (args[4] - args[-1] - args[3]*y[1] - args[5] - args[1]*y[0])/(args[0] + args[2])
         return rhs
         
     def fL(t, y, args):
         rhs = [0]*2       
         rhs[0] = y[1]
-        rhs[1] = (args[4] - args[3]*y[1] - args[5]*y[1] - args[1]*y[0])/(args[0] + args[2])
+        rhs[1] = (args[4] - args[-1] - args[3]*y[1] - args[5]*y[1] - args[1]*y[0])/(args[0] + args[2])
         return rhs
 
     # Define Tuning
@@ -156,6 +171,10 @@ def simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd):
     tim = np.array([0])
     iF = 0
     
+    # Set-up Mooring
+    if moor:
+        moorLib = ms.simLinesInit()
+        
     while r.successful() and r.t < t1:
         r.integrate(r.t+dt)
         z = np.append(z,r.y[0])
@@ -169,14 +188,21 @@ def simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd):
             Fp = np.append(Fp,dummy)
         else:
             Fp = np.append(Fp,Fdamp*r.y[1])
+        if moor:
+            arg_f[-1] = 0.1 * ms.simLines(moorLib,z[iF],v[iF],tim[iF],dt,dof)
         r.set_f_params(arg_f)
         iF = iF + 1
     
     tim = np.delete(tim,-1)
     
+    # Close Mooring
+    if moor:
+        ms.simClose(moorLib)
+        del moorLib
+        
     return tim,z,v,Fp
 
-def simBodyReg(time,Fex,Fdamp,dampType,M,c,Ma,B):
+def simBodyReg(time,Fex,Fdamp,dampType,M,c,Ma,B,moor=False,dof=[1,1,1,1,1,1]):
     
     # Initial Conditions
     y0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -185,7 +211,9 @@ def simBodyReg(time,Fex,Fdamp,dampType,M,c,Ma,B):
              B[0,0],B[1,1],B[2,2],B[3,3],B[4,4],B[5,5],B[0,4],B[1,3],
              c[2,2],c[3,3],c[4,4],Fex[0,0],Fex[1,0],Fex[2,0],Fex[3,0],
              Fex[4,0],Fex[5,0]]
-       
+    for i in range(6):
+        arg_f.append(0.0)                                   # Placeholder for optional mooring force
+    
     t0 = time[0]    
     
     def f(t, y, args):
@@ -196,12 +224,12 @@ def simBodyReg(time,Fex,Fdamp,dampType,M,c,Ma,B):
         rhs[3] = y[9]
         rhs[4] = y[10]
         rhs[5] = y[11]
-        rhs[6] = (args[27]-(args[6]+args[14])*rhs[10]-args[16]*y[6]-args[22]*y[10])/(args[0] + args[8])
-        rhs[7] = (args[28]-(args[7]+args[15])*rhs[9]-args[17]*y[7]-args[23]*y[9])/(args[1] + args[9])
-        rhs[8] = (args[29]-args[18]*y[8]-args[24]*y[2])/(args[2] + args[10])
-        rhs[9] = (args[30]-(args[7]+args[15])*rhs[7]-args[19]*y[9]-args[23]*y[7]-args[25]*y[3])/(args[3] + args[11])
-        rhs[10] = (args[31]-(args[6]+args[14])*rhs[6]-args[20]*y[10]-args[22]*y[6]-args[26]*y[4])/(args[4] + args[12])
-        rhs[11] = (args[32]-args[21]*y[11])/(args[5] + args[13])
+        rhs[6] = (args[27]-args[-6]-(args[6]+args[14])*rhs[10]-args[16]*y[6]-args[22]*y[10])/(args[0] + args[8])
+        rhs[7] = (args[28]-args[-5]-(args[7]+args[15])*rhs[9]-args[17]*y[7]-args[23]*y[9])/(args[1] + args[9])
+        rhs[8] = (args[29]-args[-4]-args[18]*y[8]-args[24]*y[2])/(args[2] + args[10])
+        rhs[9] = (args[30]-args[-3]-(args[7]+args[15])*rhs[7]-args[19]*y[9]-args[23]*y[7]-args[25]*y[3])/(args[3] + args[11])
+        rhs[10] = (args[31]-args[-2]-(args[6]+args[14])*rhs[6]-args[20]*y[10]-args[22]*y[6]-args[26]*y[4])/(args[4] + args[12])
+        rhs[11] = (args[32]-args[-1]-args[21]*y[11])/(args[5] + args[13])
         return rhs
         
     r = sci.ode(f).set_integrator('lsoda',nsteps = 50)
@@ -214,6 +242,10 @@ def simBodyReg(time,Fex,Fdamp,dampType,M,c,Ma,B):
     tim = np.array([0])
     iF = 0
     
+    # Set-up Mooring
+    if moor:
+        moorLib = ms.simLinesInit()
+        
     while r.successful() and r.t < t1:
         r.integrate(r.t+dt)
         xx[:,iF] = r.y[0:6]
@@ -228,14 +260,31 @@ def simBodyReg(time,Fex,Fdamp,dampType,M,c,Ma,B):
         arg_f[31] = Fex[4,iF]
         arg_f[32] = Fex[5,iF]
         
+        if moor:
+            if sum(dof)<2:
+                arg_f[dof.index(1)-6] = 0.1 * ms.simLines(moorLib,xx[dof.index(1),iF],vv[dof.index(1),iF],tim[iF],dt,dof)
+            else:
+                Fmoor = 0.1 * ms.simLines(moorLib,xx[:,iF],vv[:,iF],tim[iF],dt,dof)
+                arg_f[-6] = Fmoor[0]
+                arg_f[-5] = Fmoor[1]
+                arg_f[-4] = Fmoor[2]
+                arg_f[-3] = Fmoor[3]
+                arg_f[-2] = Fmoor[4]
+                arg_f[-1] = Fmoor[5]
+            
         r.set_f_params(arg_f)
         iF = iF + 1
     
     tim = np.delete(tim,-1)
     
+    # Close Mooring
+    if moor:
+        ms.simClose(moorLib)
+        del moorLib
+        
     return tim,xx,vv
 
-def simBody(time,Fex,Fdamp,dampType,M,Ma,B,c,alpha,beta):
+def simBody(time,Fex,Fdamp,dampType,M,Ma,B,c,alpha,beta,moor=False,dof=[1,1,1,1,1,1]):
     
     # Initial Conditions
     y0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -250,6 +299,9 @@ def simBody(time,Fex,Fdamp,dampType,M,Ma,B,c,alpha,beta):
         arg_f.append(alpha[iA])
     for iA in range(0,len(alpha)):
         arg_f.append(beta[iA])
+
+    for i in range(6):
+        arg_f.append(0.0)                                   # Placeholder for optional mooring force
    
     t0 = time[0]    
     
@@ -261,18 +313,18 @@ def simBody(time,Fex,Fdamp,dampType,M,Ma,B,c,alpha,beta):
         rhs[3] = y[9]
         rhs[4] = y[10]
         rhs[5] = y[11]
-        rhs[6] = (args[27]-(args[6]+args[14])*rhs[10]-args[16]*y[6]-args[22]*y[10])/(args[0] + args[8])
-        rhs[7] = (args[28]-(args[7]+args[15])*rhs[9]-args[17]*y[7]-args[23]*y[9])/(args[1] + args[9])
+        rhs[6] = (args[27]-args[-6]-(args[6]+args[14])*rhs[10]-args[16]*y[6]-args[22]*y[10])/(args[0] + args[8])
+        rhs[7] = (args[28]-args[-5]-(args[7]+args[15])*rhs[9]-args[17]*y[7]-args[23]*y[9])/(args[1] + args[9])
         #rhs[8] = (args[29]-args[18]*y[8]-args[24]*y[2])/(args[2] + args[10])
         rhs[8] = 0.0
         I = ''
         for iB in range(0,len(rhs) - 12):
             I = I + ' - y[' + str(12+iB) + ']'
             rhs[iB+12] = args[iB+(len(args)-33)/2+33]*y[iB+2]+args[iB+33]*y[1]
-        rhs[8] = eval('(args[29] - args[24]*y[2]' + I + ')/(args[2]+args[10])')
-        rhs[9] = (args[30]-(args[7]+args[15])*rhs[7]-args[19]*y[9]-args[23]*y[7]-args[25]*y[3])/(args[3] + args[11])
-        rhs[10] = (args[31]-(args[6]+args[14])*rhs[6]-args[20]*y[10]-args[22]*y[6]-args[26]*y[4])/(args[4] + args[12])
-        rhs[11] = (args[32]-args[21]*y[11])/(args[5] + args[13])
+        rhs[8] = eval('(args[29] - args[-4]-args[24]*y[2]' + I + ')/(args[2]+args[10])')
+        rhs[9] = (args[30]-args[-3]-(args[7]+args[15])*rhs[7]-args[19]*y[9]-args[23]*y[7]-args[25]*y[3])/(args[3] + args[11])
+        rhs[10] = (args[31]-args[-2]-(args[6]+args[14])*rhs[6]-args[20]*y[10]-args[22]*y[6]-args[26]*y[4])/(args[4] + args[12])
+        rhs[11] = (args[32]-args[-1]-args[21]*y[11])/(args[5] + args[13])
         return rhs
         
     r = sci.ode(f).set_integrator('lsoda',nsteps = 50)
@@ -285,6 +337,10 @@ def simBody(time,Fex,Fdamp,dampType,M,Ma,B,c,alpha,beta):
     tim = np.array([0])
     iF = 0
     
+    # Set-up Mooring
+    if moor:
+        moorLib = ms.simLinesInit()
+        
     while r.successful() and r.t < t1:
         r.integrate(r.t+dt)
         xx[:,iF] = r.y[0:6]
@@ -299,11 +355,28 @@ def simBody(time,Fex,Fdamp,dampType,M,Ma,B,c,alpha,beta):
         arg_f[31] = Fex[4,iF]
         arg_f[32] = Fex[5,iF]
         
+        if moor:
+            if sum(dof)<2:
+                arg_f[dof.index(1)-6] = 0.1 * ms.simLines(moorLib,xx[dof.index(1),iF],vv[dof.index(1),iF],tim[iF],dt,dof)
+            else:
+                Fmoor = 0.1 * ms.simLines(moorLib,xx[:,iF],vv[:,iF],tim[iF],dt,dof)
+                arg_f[-6] = Fmoor[0]
+                arg_f[-5] = Fmoor[1]
+                arg_f[-4] = Fmoor[2]
+                arg_f[-3] = Fmoor[3]
+                arg_f[-2] = Fmoor[4]
+                arg_f[-1] = Fmoor[5]
+                
         r.set_f_params(arg_f)
         iF = iF + 1
     
     tim = np.delete(tim,-1)
     
+    # Close Mooring
+    if moor:
+        ms.simClose(moorLib)
+        del moorLib
+        
     return tim,xx,vv
 
     
