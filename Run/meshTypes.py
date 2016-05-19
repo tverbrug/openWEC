@@ -23,8 +23,7 @@ class Mesh:
                 if (isEq == 12):
                     coinTarg = nup.delete(coinTarg,iFF,2)
                     delList.append(iF)
-        for iDel in delList:
-            coinTest = nup.delete(coinTest,iDel,2)
+        coinTest = nup.delete(coinTest,delList,2)
         # Concatenate unique meshes
         coin = nup.concatenate((coinTest,coinTarg),axis=2)
         self.np = nup.size(coin[1,1,:])*4
@@ -53,6 +52,38 @@ class Mesh:
                 coin[1,iC,iF] = self.Y[self.P[iF,iC]-1]
                 coin[2,iC,iF] = self.Z[self.P[iF,iC]-1]
         return coin
+    def delHorPan(self):
+        coin = self.makeCoin()
+        apex = nup.min(self.Z)
+        zLoc = nup.zeros(4)
+        delList = []
+        # Check every panel for horizontality and higher position than lowest point
+        for iP in range(self.nf):
+            for iC in range(4):
+                zLoc[iC] = coin[2,iC,iP]
+            if (nup.abs(nup.mean(zLoc)-zLoc[0]) < 0.001 and nup.mean(zLoc) > apex):
+                delList.append(iP)
+        # Delete selected panels
+        coin = nup.delete(coin,delList,2)
+        # Remake mesh
+        self.np = nup.size(coin[1,1,:])*4
+        self.nf = nup.size(coin[1,1,:])
+        self.X = nup.zeros(nup.size(coin[1,1,:])*4)
+        self.Y = nup.zeros(nup.size(coin[1,1,:])*4)
+        self.Z = nup.zeros(nup.size(coin[1,1,:])*4)
+        self.P = nup.zeros((nup.size(coin[1,1,:]),4),dtype = int)
+
+        iP = 0
+        for iF in range(nup.size(coin[1,1,:])):
+            for iC in range(4):
+                self.X[iP] = coin[0,iC,iF]
+                self.Y[iP] = coin[1,iC,iF]
+                self.Z[iP] = coin[2,iC,iF]
+                iP += 1
+            self.P[iF,0] = 1+(iF)*4
+            self.P[iF,1] = 2+(iF)*4
+            self.P[iF,2] = 3+(iF)*4
+            self.P[iF,3] = 4+(iF)*4
         
 def writeMesh(msh,filename):
     with open(filename,'w') as f:

@@ -1023,11 +1023,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         z1 = np.array([0.0])
         z2 = np.linspace(0.0,-(diam/2.0),dz)
-        z = np.concatenate((z1,z2))
+        z = np.concatenate((z1,z2),axis=1)
         z = list(z)
         r1 = np.array([0.0])
         r2 = np.sqrt(diam**2/4.0-(z2)**2)
-        r = np.concatenate((r1,r2))
+        r = np.concatenate((r1,r2),axis=1)
         r = list(r)
         n = len(z)    
 

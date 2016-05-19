@@ -1842,6 +1842,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                     comMesh = mt.Mesh()
                     comMesh.combineMesh(startMesh,self.meshObj[iM+1])
                     startMesh = comMesh
+                comMesh.delHorPan()
                 mt.writeMesh(comMesh,'./Calculation/mesh/axisym')
                 ne.createMeshOpt(zG,nPanels,int(0),rho=float(self.rhoBox.text()))
             elif(len(self.meshObj)==1):

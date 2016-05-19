@@ -1,0 +1,17 @@
+ 
+  -> Read input data 
+  
+  -> Calculate hydrostatics 
+  
+   - Coordinates of buoyancy centre 
+     XB =   0.000m
+     YB =   0.000m
+     ZB =  -1.720m
+    - Displacement  =  0.1587630E+03 m^3
+    - Waterplane area  =  0.5022824E+02 m^2
+  
+  -> Make mesh 
+  
+    Number of panels in final mesh :  1034
+  -> Calculate hull mass and inertia 
+  
