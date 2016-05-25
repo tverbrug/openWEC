@@ -15,7 +15,6 @@ from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationTo
 from matplotlib.figure import Figure
 from functools import partial
 import matplotlib.tri as tri
-import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import nemoh as ne
 import sys
@@ -1098,7 +1097,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.plotToolTitle = QtGui.QLabel(self.tabPost)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Arial"))
-        font.setPointSize(10)
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
         self.plotToolTitle.setFont(font)
         self.plotToolTitle.setObjectName(_fromUtf8("plotToolTitle"))
         self.formLayout_5.setWidget(0, QtGui.QFormLayout.LabelRole, self.plotToolTitle)
@@ -1126,6 +1127,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         font.setPointSize(9)
         self.chooseX1.setFont(font)
         self.chooseX1.setObjectName(_fromUtf8("chooseX1"))
+        self.chooseX1.addItem(_fromUtf8(""))
         self.chooseX1.addItem(_fromUtf8(""))
         self.chooseX1.addItem(_fromUtf8(""))
         self.formLayout_5.setWidget(3, QtGui.QFormLayout.FieldRole, self.chooseX1)
@@ -1194,6 +1196,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         font.setPointSize(9)
         self.chooseX2.setFont(font)
         self.chooseX2.setObjectName(_fromUtf8("chooseX2"))
+        self.chooseX2.addItem(_fromUtf8(""))
         self.chooseX2.addItem(_fromUtf8(""))
         self.chooseX2.addItem(_fromUtf8(""))
         self.formLayout_5.setWidget(10, QtGui.QFormLayout.FieldRole, self.chooseX2)
@@ -1324,6 +1327,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.velZ = np.array([0,1])
         self.wave = np.array([0,1])
         self.Fpto = np.array([0,1])
+        self.X = np.zeros((4,4))
+        self.Y = np.zeros((4,4))
+        self.etaDiff = np.zeros((4,4))
+        self.etaRad = np.zeros((4,4))
+        
         self.nrObj = 0
         self.meshObj = []
         # Set GUI
@@ -1457,9 +1465,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         # Post Processor
         self.plotToolTitle.setText(_translate("MainWindow", "Plotting Tool", None))
         self.upPlotTitle.setText(_translate("MainWindow", "Upper Plot", None))
-        self.plotX1.setText(_translate("MainWindow", "Variable for X-axis                                                                  ", None))
-        self.chooseX1.setItemText(0, _translate("MainWindow", "Frequency                                                                   ", None))
+        self.plotX1.setText(_translate("MainWindow", "Variable for X-axis                                                                                    ", None))
+        self.chooseX1.setItemText(0, _translate("MainWindow", "Frequency                                                                                                                  ", None))
         self.chooseX1.setItemText(1, _translate("MainWindow", "Time", None))
+        self.chooseX1.setItemText(2, _translate("MainWindow", "Grid", None))
         self.chooseX1.currentIndexChanged.connect(partial(self.plotVariables,plotWindow=1))
         self.plotY1.setText(_translate("MainWindow", "Variable for Y-axis", None))
         self.chooseY1.setItemText(0, _translate("MainWindow", "Added Mass", None))
@@ -1479,6 +1488,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.chooseY2.setItemText(3, _translate("MainWindow", "Response Amplitude Operator", None))
         self.chooseX2.setItemText(0, _translate("MainWindow", "Frequency", None))
         self.chooseX2.setItemText(1, _translate("MainWindow", "Time", None))
+        self.chooseX2.setItemText(2, _translate("MainWindow", "Grid", None))
         self.chooseX2.currentIndexChanged.connect(partial(self.plotVariables,plotWindow=2))
         self.dofPlotL.setItemText(0, _translate("openWEC", "-", None))
         self.dofLabelL.setText(_translate("openWEC", "Degree of Freedom", None))        
@@ -1515,26 +1525,32 @@ class Ui_MainWindow(QtGui.QMainWindow):
         # Set the correct variables
         if plotWindow == 1:
             dofSel = [0,0,0,0,0,0]
-            test = self.chooseX1.currentIndex() + 2*self.chooseY1.currentIndex()
+            test = 4*self.chooseX1.currentIndex() + self.chooseY1.currentIndex()
             iSel = nameDof.index(self.dofPlotU.currentText())
             dofSel[iSel] = 1
             mpl = self.mpl1
             ntb = self.ntb1
         else:
             dofSel = [0,0,0,0,0,0]
-            test = self.chooseX2.currentIndex() + 2*self.chooseY2.currentIndex()
+            test = 4*self.chooseX2.currentIndex() + self.chooseY2.currentIndex()
             iSel = nameDof.index(self.dofPlotL.currentText())
             dofSel[iSel] = 1
             mpl = self.mpl2
             ntb = self.ntb2
+            
+        try:
+            rho = float(self.rhoBox.text())
+        except:
+            rho = 1025.0
          
         (self.Ma,self.Bhyd,omeg) = pn.getAB(self.dof,sel=iSel)
         self.freq = omeg/(2*np.pi)
         (self.Fe,self.Fpha) = pn.getFe(self.dof,sel=iSel)
-        (Mass,KH) = pn.calcM(rho=1025.0,dof=dofSel)
+        (Mass,KH) = pn.calcM(rho=rho,dof=dofSel)
         self.RAO = (self.Fe)/np.abs(-omeg**2.0*(Mass+self.Ma)-1j*omeg*self.Bhyd+KH)
         
-        if test % 2 == 1:
+        pT = ""
+        if test/4 == 1:
             if sum(self.dof) > 1:
                 posZ = self.posZ[iSel,:]  
                 velZ = self.velZ[iSel,:]       
@@ -1543,6 +1559,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 posZ = self.posZ 
                 velZ = self.velZ       
                 Fpto = self.Fpto
+        elif test/4 == 2:
+            pT = "Grid"
+            if(os.path.isfile('./Run/Nemoh/freesurface.    1.dat')):
+                None
+            else:
+                print("Warning! No free surface was calculated with Nemoh! Plotting not possible!")
             
         if test==0:
             xVar = self.freq
@@ -1550,42 +1572,63 @@ class Ui_MainWindow(QtGui.QMainWindow):
             xlabel = '$Frequency [Hz]$'
             ylabel = '$Added Mass/Inertia$'
         elif test==1:
-            xVar = self.time
-            yVar = self.wave
-            xlabel = '$Time [s]$'
-            ylabel = '$\eta [m]$'
-        elif test==2:
             xVar = self.freq
             yVar = self.Bhyd
             xlabel = '$Frequency [Hz]$'
             ylabel = '$Hydrodynamic Damping$'
-        elif test==3:
-            xVar = self.time
-            yVar = posZ
-            xlabel = '$Time [s]$'
-            ylabel = '$WEC Response$'
-        elif test==4:
+        elif test==2:
             xVar = self.freq
             yVar = self.Fe
             xlabel = '$Frequency [Hz]$'
             ylabel = '$Excitation Force/Torque$'
-        elif test==5:
-            xVar = self.time
-            yVar = velZ
-            xlabel = '$Time [s]$'
-            ylabel = '$WEC Velocity$'
-        elif test==6:
+        elif test==3:
             xVar = self.freq
             yVar = self.RAO
             xlabel = '$Frequency [s]$'
             ylabel = '$RAO$'
+        elif test==4:
+            xVar = self.time
+            yVar = self.wave
+            xlabel = '$Time [s]$'
+            ylabel = '$\eta [m]$'
+        elif test==5:
+            xVar = self.time
+            yVar = posZ
+            xlabel = '$Time [s]$'
+            ylabel = '$WEC Response$'
+        elif test==6:
+            xVar = self.time
+            yVar = velZ
+            xlabel = '$Time [s]$'
+            ylabel = '$WEC Velocity$'
         elif test==7:
             xVar = self.time
             yVar = Fpto
             xlabel = '$Time [s]$'
             ylabel = '$PTO Force/Torque$'
+        elif test==8:
+            xVar = (self.X,self.Y)
+            yVar = np.abs(self.etaDiff)
+            xlabel = '$X [m]$'
+            ylabel = '$Y [m]$'
+        elif test==9:
+            xVar = (self.X,self.Y)
+            yVar = np.angle(self.etaDiff)
+            xlabel = '$X [m]$'
+            ylabel = '$Y [m]$'
+        elif test==10:
+            xVar = (self.X,self.Y)
+            yVar = np.abs(self.etaRad)
+            xlabel = '$X [m]$'
+            ylabel = '$Y [m]$'
+        elif test==11:
+            xVar = (self.X,self.Y)
+            yVar = np.angle(self.etaRad)
+            xlabel = '$X [m]$'
+            ylabel = '$Y [m]$'
+
         # Plot the variables
-        self.updateGraph(x=xVar,y=yVar,g=mpl,t=ntb,xlab=xlabel,ylab=ylabel)
+        self.updateGraph(x=xVar,y=yVar,g=mpl,t=ntb,xlab=xlabel,ylab=ylabel,plotType=pT)
 
     def updateGraph(self,x=[0,1,2],y=[1,1,1],x2=[],y2=[],g=[],t=[],
     xlab = "", ylab = "", plotType=""):
@@ -1628,6 +1671,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 g.axes.plot_trisurf(triangul,ob.Z,color = '#468499',edgecolors='None')
             g.axes._axis3don = False
             g.draw()
+            
+        elif plotType == "Grid":
+            t.update()
+            g.fig.delaxes(g.axes)
+            g.axes = g.fig.add_axes([0.1, 0.17, 0.7, 0.75])
+            cax = g.fig.add_axes([0.85, 0.17, 0.05, 0.75])
+            test = g.axes.pcolor(x[0],x[1],y)
+            g.fig.colorbar(test, cax=cax, orientation='vertical')
+            g.axes.set_xlabel(xlab)
+            g.axes.set_ylabel(ylab)
+            g.draw()
+            g.axes.hold(False)
             
         else:
             t.update()
@@ -1714,6 +1769,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 self.chooseY1.setItemText(1, _translate("MainWindow", "Hydrodynamic Damping", None))
                 self.chooseY1.setItemText(2, _translate("MainWindow", "Wave Excitation Force", None))
                 self.chooseY1.setItemText(3, _translate("MainWindow", "Response Amplitude Operator", None))
+            if self.chooseX1.currentIndex()==2:
+                self.chooseY1.setItemText(0, _translate("MainWindow", "Diffraction Amplitude", None))
+                self.chooseY1.setItemText(1, _translate("MainWindow", "Diffraction Phase Angle", None))
+                self.chooseY1.setItemText(2, _translate("MainWindow", "Radiation Amplitude", None))
+                self.chooseY1.setItemText(3, _translate("MainWindow", "Radiation Phase Angle", None))
         else:
             if self.chooseX2.currentIndex()==1:
                 self.chooseY2.setItemText(0, _translate("MainWindow", "Wave Signal", None))
@@ -1725,6 +1785,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 self.chooseY2.setItemText(1, _translate("MainWindow", "Hydrodynamic Damping", None))
                 self.chooseY2.setItemText(2, _translate("MainWindow", "Wave Excitation Force", None))
                 self.chooseY2.setItemText(3, _translate("MainWindow", "Response Amplitude Operator", None))
+            if self.chooseX1.currentIndex()==2:
+                self.chooseY2.setItemText(0, _translate("MainWindow", "Diffraction Amplitude", None))
+                self.chooseY2.setItemText(1, _translate("MainWindow", "Diffraction Phase Angle", None))
+                self.chooseY2.setItemText(2, _translate("MainWindow", "Radiation Amplitude", None))
+                self.chooseY2.setItemText(3, _translate("MainWindow", "Radiation Phase Angle", None))
 
     def drawObj(self,MainWindow):
         
@@ -1886,7 +1951,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         o3 = float(self.omegaStop.text())
         o1 = int(float(self.omegaStep.text()))
         omega = [o1,o2,o3]
-        rhoW = 1025.0
+        try:
+            rhoW = float(self.rhoBox.text())
+        except:
+            rhoW = 1025.0
         zG = float(self.zGBox.text())
         
         # DOF        
@@ -1922,8 +1990,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
             advOps['kochCheck'] = False
         if self.fsCheck.isChecked():
             advOps['fsCheck'] = True
-            advOps['fsDeltaX'] = float(self.fsDeltaX.text())
-            advOps['fsDeltaY'] = float(self.fsDeltaX.text())
+            advOps['fsDeltaX'] = int(self.fsDeltaX.text())
+            advOps['fsDeltaY'] = int(self.fsDeltaX.text())
             advOps['fsLengthX'] = float(self.fsLengthX.text())
             advOps['fsLengthY'] = float(self.fsLengthY.text())
         else:
@@ -1964,11 +2032,17 @@ class Ui_MainWindow(QtGui.QMainWindow):
         (self.Ma,self.Bhyd,omeg) = pn.getAB(self.dof,sel=self.dof.index(1))
         self.freq = omeg/(2*np.pi)
         (self.Fe,self.Fpha) = pn.getFe(self.dof,sel=self.dof.index(1))
+        (Mass,KH) = pn.calcM(rho=rhoW,dof=self.dof)
+        RAO = (self.Fe)/np.abs(-omeg**2.0*(Mass+self.Ma)-1j*omeg*self.Bhyd+KH)
         self.updateGraph(x=self.freq,y=self.Ma,x2=self.freq,y2=self.Bhyd,g=self.mplNem,
         t=self.ntbNem,xlab=xlabel,ylab=ylabel)
         
         # Change DOF labels in postprocessing window
         self.changeDofLabels()
+        
+        # Calculate FS/Kochin grids
+        if self.fsCheck.isChecked():
+            self.X,self.Y,self.etaDiff,self.etaRad = pn.getFS(advOps,waterDepth,omeg,RAO)
             
         print ('Program Finished!')
 
@@ -2034,7 +2108,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         # Get Wave Parameters
         Hs = float(self.wavHBox.text())
         Tm = float(self.wavTBox.text())
-        rho = 1025.0
+        try:
+            rho = float(self.rhoBox.text())
+        except:
+            rho = 1025.0
 
         # DOF        
         self.dof = [1,1,1,1,1,1]

@@ -9,6 +9,7 @@ Function of a floating WEC by a sum of complex exponential functions.
 """
 
 import numpy as np
+import nemoh as ne
 
 def calcAlphaBeta(nSel,rho,dof):
 
@@ -433,3 +434,55 @@ def getMesh(nbody=1):
                 iL += 1
     # Return values
     return(x,y,z,trii)
+    
+def getFS(advOps,depth,omeg,RAO):
+    # Read Grid
+    Nx = advOps['fsDeltaX']
+    Ny = advOps['fsDeltaY']
+    Lx = advOps['fsLengthX']
+    Ly = advOps['fsLengthY']
+    
+    X = np.linspace(-Lx/2.0,Lx/2.0,Nx)
+    Y = np.linspace(-Ly/2.0,Ly/2.0,Ny)
+    X,Y = np.meshgrid(X,Y)
+
+    # Find max of RAO
+    iMax = np.argmax(RAO)
+    RAO = RAO[iMax]
+    omeg = omeg[iMax]    
+
+    # Read diffraction
+    
+    with open('./Run/Nemoh/freesurface.    1.dat','r') as f:
+        allEta = f.readlines()
+        
+    modE1 = np.zeros(np.shape(X))
+    modE2 = np.zeros(np.shape(X))
+    phaE1 = np.zeros(np.shape(X))
+    phaE2 = np.zeros(np.shape(X))
+    
+    iL = 0
+    for iX in range(np.size(X,1)):
+        for iY in range(np.size(X,0)):
+            (modE1[iY,iX],phaE1[iY,iX]) = [float(a) for a in allEta[iL+2].split()[2:4]]
+            iL += 1
+            
+    # Read radiation
+            
+    spaces = " "*(5-len(str(iMax+2)))
+    with open('./Run/Nemoh/freesurface.'  + spaces +  '{:d}.dat'.format(iMax+2),'r') as f:
+        allEta = f.readlines()
+        
+    iL = 0
+    for iX in range(np.size(X,1)):
+        for iY in range(np.size(X,0)):
+            (modE2[iY,iX],phaE2[iY,iX]) = [float(a) for a in allEta[iL+2].split()[2:4]]
+            iL += 1
+    
+    etaDiff = modE1 * np.exp(1j*(phaE1-3.0*np.pi/2.0))
+    etaRad = 1j*omeg*RAO*(modE2 * np.exp(1j*(phaE2-3.0*np.pi/2.0)))
+    
+    return X,Y,etaDiff,etaRad
+
+def getKoch():
+    None

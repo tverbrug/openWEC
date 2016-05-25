@@ -15,7 +15,6 @@ from matplotlib.backends.backend_qt4 import NavigationToolbar2QT as NavigationTo
 from matplotlib.figure import Figure
 from functools import partial
 import matplotlib.tri as tri
-import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import nemoh as ne
 import sys
@@ -1060,7 +1059,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         o3 = float(self.omegaStop.text())
         o1 = int(float(self.omegaStep.text()))
         omega = [o1,o2,o3]
-        rhoW = 1025.0
+        try:
+            rhoW = float(self.rhoBox.text())
+        except:
+            rhoW = 1025.0
         diam = float(self.diameterBox.text())
         zG = -1.0*diam/2.0
 
@@ -1159,7 +1161,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         Hs = float(self.wavHBox.text())
         Tm = float(self.wavTBox.text())
         dof = [0,0,1,0,0,0]
-        rho = 1025.0
+        try:
+            rho = float(self.rhoBox.text())
+        except:
+            rho = 1025.0
         
         # Get Damping value and type
         dampType = self.dampSelect.currentIndex()
