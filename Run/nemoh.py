@@ -12,7 +12,6 @@ import os
 import shutil as sh
 import platform as pt
 
-
 # Used Functions
 
 def createMeshAxi(r,z,n,dtheta):
@@ -90,7 +89,10 @@ def createMeshOpt(zG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
         fid.write('{0:f}\n'.format(9.81))
         fid.close()
         os.chdir('Calculation')
-        os.system('Mesh.exe')
+        if pt.system()=='Linux':
+            os.system('meshL')
+        else:
+            os.system('Mesh.exe')
         os.chdir('../')
     else:
         for iB in range(nbody):
@@ -106,7 +108,10 @@ def createMeshOpt(zG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
             fid.write('{0:f}\n'.format(9.81))
             fid.close()
             os.chdir('Calculation')
-            os.system('Mesh.exe')
+            if pt.system()=='Linux':
+                os.system('meshL')
+            else:
+                os.system('Mesh.exe')
             os.chdir('../')
 
 def writeCalFile(rhoW,depW,omega,zG,dof,aO={},nbody=1,xG=[0.0]):

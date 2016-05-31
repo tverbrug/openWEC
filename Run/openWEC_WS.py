@@ -42,13 +42,12 @@ class GenericThread(QtCore.QThread):
         self.function = function
         self.args = args
         self.kwargs = kwargs
-        self.output = ()
-
+ 
     def __del__(self):
         self.wait()
-
+ 
     def run(self):
-        self.output = self.function(*self.args,**self.kwargs)
+        self.function(*self.args,**self.kwargs)
         return
 
 class EmittingStream(QtCore.QObject):
@@ -567,6 +566,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.chooseX1.setObjectName(_fromUtf8("chooseX1"))
         self.chooseX1.addItem(_fromUtf8(""))
         self.chooseX1.addItem(_fromUtf8(""))
+        self.chooseX1.addItem(_fromUtf8(""))
         self.formLayout_5.setWidget(3, QtGui.QFormLayout.FieldRole, self.chooseX1)
         self.plotY1 = QtGui.QLabel(self.tabPost)
         font = QtGui.QFont()
@@ -633,6 +633,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         font.setPointSize(9)
         self.chooseX2.setFont(font)
         self.chooseX2.setObjectName(_fromUtf8("chooseX2"))
+        self.chooseX2.addItem(_fromUtf8(""))
         self.chooseX2.addItem(_fromUtf8(""))
         self.chooseX2.addItem(_fromUtf8(""))
         self.formLayout_5.setWidget(9, QtGui.QFormLayout.FieldRole, self.chooseX2)
@@ -737,6 +738,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.nrObj = 0
         self.meshObj = []
         self.RAO = np.array([0,1])
+        self.X = np.zeros((4,4))
+        self.Y = np.zeros((4,4))
+        self.etaDiff = np.zeros((4,4))
+        self.etaRad = np.zeros((4,4))
         # Set GUI
         # Mesh Tab
         MainWindow.setWindowTitle(_translate("openWEC", "openWEC", None))
@@ -811,7 +816,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.dtLabel.setText(_translate("MainWindow", "Time Step:", None))
         self.dtBox.setPlaceholderText(_translate("MainWindow", "in seconds", None))
         self.simButton.setText(_translate("MainWindow", "Simulate!", None))
-        self.simButton.clicked.connect(self.runSimulation)
+        self.simButton.clicked.connect(partial(self.runThread,pf=self.postSim,f=self.runSimulation))        
         self.nemConsLabel_2.setText(_translate("MainWindow", "Information Console", None))
         self.nemVisualisation_2.setText(_translate("MainWindow", "Visualisation", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSim), _translate("MainWindow", "Simulation", None))
@@ -821,6 +826,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.plotX1.setText(_translate("MainWindow", "Variable for X-axis                                                                  ", None))
         self.chooseX1.setItemText(0, _translate("MainWindow", "Frequency                                                                   ", None))
         self.chooseX1.setItemText(1, _translate("MainWindow", "Time", None))
+        self.chooseX1.setItemText(2, _translate("MainWindow", "Grid", None))        
         self.chooseX1.currentIndexChanged.connect(partial(self.plotVariables,plotWindow=1))
         self.plotY1.setText(_translate("MainWindow", "Variable for Y-axis", None))
         self.chooseY1.setItemText(0, _translate("MainWindow", "Added Mass", None))
@@ -838,6 +844,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.chooseY2.setItemText(3, _translate("MainWindow", "Response Amplitude Operator", None))
         self.chooseX2.setItemText(0, _translate("MainWindow", "Frequency", None))
         self.chooseX2.setItemText(1, _translate("MainWindow", "Time", None))
+        self.chooseX2.setItemText(2, _translate("MainWindow", "Grid", None))        
         self.chooseX2.currentIndexChanged.connect(partial(self.plotVariables,plotWindow=2))
         self.makePlot2.setText(_translate("MainWindow", "Plot 2", None))
         self.makePlot2.clicked.connect(partial(self.overwriteGraph,plotWindow=2))
@@ -867,13 +874,22 @@ class Ui_MainWindow(QtGui.QMainWindow):
     def overwriteGraph(self,plotWindow=1):
         # Set the correct variables
         if plotWindow == 1:
-            test = self.chooseX1.currentIndex() + 2*self.chooseY1.currentIndex()
+            test = 4*self.chooseX1.currentIndex() + self.chooseY1.currentIndex()
             mpl = self.mpl1
             ntb = self.ntb1
         else:
-            test = self.chooseX2.currentIndex() + 2*self.chooseY2.currentIndex()
+            test = 4*self.chooseX2.currentIndex() + self.chooseY2.currentIndex()
             mpl = self.mpl2
             ntb = self.ntb2
+            
+        pT = ""
+        if test/4 == 2:
+            pT = "Grid"
+            if(os.path.isfile('./Run/Nemoh/freesurface.    1.dat')):
+                None
+            else:
+                print("Warning! No free surface was calculated with Nemoh! Plotting not possible!")
+
         if test==0:
             xVar = self.freq
             yVar = self.Ma
@@ -914,8 +930,28 @@ class Ui_MainWindow(QtGui.QMainWindow):
             yVar = self.Fpto
             xlabel = 'Time [s]'
             ylabel = '$F_{PTO}$ [N]'
+        elif test==8:
+            xVar = (self.X,self.Y)
+            yVar = np.abs(self.etaDiff)
+            xlabel = '$X [m]$'
+            ylabel = '$Y [m]$'
+        elif test==9:
+            xVar = (self.X,self.Y)
+            yVar = np.angle(self.etaDiff)
+            xlabel = '$X [m]$'
+            ylabel = '$Y [m]$'
+        elif test==10:
+            xVar = (self.X,self.Y)
+            yVar = np.abs(self.etaRad)
+            xlabel = '$X [m]$'
+            ylabel = '$Y [m]$'
+        elif test==11:
+            xVar = (self.X,self.Y)
+            yVar = np.angle(self.etaRad)
+            xlabel = '$X [m]$'
+            ylabel = '$Y [m]$'            
         # Plot the variables
-        self.updateGraph(x=xVar,y=yVar,g=mpl,t=ntb,xlab=xlabel,ylab=ylabel)
+        self.updateGraph(x=xVar,y=yVar,g=mpl,t=ntb,xlab=xlabel,ylab=ylabel,plotType=pT)
 
     def updateGraph(self,x=[0,1,2],y=[1,1,1],x2=[],y2=[],g=[],t=[],
     xlab = "", ylab = "", plotType=""):
@@ -946,7 +982,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
             g.axes.plot(zline[0],zline[1],zline[2],'grey')
             g.draw()
 
-
+        elif plotType == "Grid":
+            t.update()
+            g.fig.delaxes(g.axes)
+            g.axes = g.fig.add_axes([0.1, 0.17, 0.7, 0.75])
+            cax = g.fig.add_axes([0.85, 0.17, 0.05, 0.75])
+            test = g.axes.pcolor(x[0],x[1],y)
+            g.fig.colorbar(test, cax=cax, orientation='vertical')
+            g.axes.set_xlabel(xlab)
+            g.axes.set_ylabel(ylab)
+            g.draw()
+            g.axes.hold(False)
+            
         else:
             t.update()
             g.fig.delaxes(g.axes)
@@ -997,6 +1044,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 self.chooseY1.setItemText(1, _translate("MainWindow", "Hydrodynamic Damping", None))
                 self.chooseY1.setItemText(2, _translate("MainWindow", "Wave Excitation Force", None))
                 self.chooseY1.setItemText(3, _translate("MainWindow", "Response Amplitude Operator", None))
+            if self.chooseX1.currentIndex()==2:
+                self.chooseY1.setItemText(0, _translate("MainWindow", "Diffraction Amplitude", None))
+                self.chooseY1.setItemText(1, _translate("MainWindow", "Diffraction Phase Angle", None))
+                self.chooseY1.setItemText(2, _translate("MainWindow", "Radiation Amplitude", None))
+                self.chooseY1.setItemText(3, _translate("MainWindow", "Radiation Phase Angle", None))
         else:
             if self.chooseX2.currentIndex()==1:
                 self.chooseY2.setItemText(0, _translate("MainWindow", "Wave Signal", None))
@@ -1008,11 +1060,15 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 self.chooseY2.setItemText(1, _translate("MainWindow", "Hydrodynamic Damping", None))
                 self.chooseY2.setItemText(2, _translate("MainWindow", "Wave Excitation Force", None))
                 self.chooseY2.setItemText(3, _translate("MainWindow", "Response Amplitude Operator", None))
+            if self.chooseX2.currentIndex()==2:
+                self.chooseY2.setItemText(0, _translate("MainWindow", "Diffraction Amplitude", None))
+                self.chooseY2.setItemText(1, _translate("MainWindow", "Diffraction Phase Angle", None))
+                self.chooseY2.setItemText(2, _translate("MainWindow", "Radiation Amplitude", None))
+                self.chooseY2.setItemText(3, _translate("MainWindow", "Radiation Phase Angle", None))
                 
     def makeMesh(self,MainWindow):
         
         sys.path.insert(0, './Run')
-        import meshTypes as mt
         
         diam = float(self.diameterBox.text())
         zG = -1.0*diam/2.0
@@ -1031,16 +1087,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
         n = len(z)    
 
         ne.createMeshAxi(r,z,n,dtheta)
-        ne.createMeshOpt(zG,nPanels,int(1),float(self.rhoBox.text()))
+        print("Meshing...")
+        self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(1),rho=float(self.rhoBox.text()))
+        self.genericThread.start()
+        self.genericThread.finished.connect(self.visualizeMesh)
 
+    def visualizeMesh(self):
         # Mesh visualisation
-        
         sys.path.insert(0, './Run')
         import processNemoh as pn
         
         (X,Y,Z,trian) = pn.getMesh()
         self.updateGraph(x=X,y=Y,x2=trian,y2=Z,plotType="Mesh")
-        
         print('Mesh succesfully created!')
 
     def runNemohCode(self):
@@ -1099,8 +1157,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         # Write CAL file
         ne.writeCalFile(rhoW,waterDepth,omega,zG,dof,aO=advOps)
-        ne.runNemoh()
-
+        self.genericThread = GenericThread(ne.runNemoh)
+        self.genericThread.start()
+        print("Nemoh Simulation Running...")
+        self.genericThread.finished.connect(partial(self.postNemoh,advOps,rhoW,waterDepth))
+        
+    def postNemoh(self,advOps,rhoW,depth):
         # Delete content of destination folder
         folder = './Run/Nemoh'
         for fil in os.listdir(folder):
@@ -1129,15 +1191,24 @@ class Ui_MainWindow(QtGui.QMainWindow):
         xlabel = 'Frequency [Hz]'
         ylabel = '$M_a$ and $B_{hyd}$'
 
-        (self.Ma,self.Bhyd,omeg) = pn.getAB(dof,sel=self.dof.index(1))
+        (self.Ma,self.Bhyd,omeg) = pn.getAB(self.dof,sel=self.dof.index(1))
         self.freq = omeg/(2*np.pi)
-        (self.Fe,self.Fpha) = pn.getFe(dof,sel=self.dof.index(1))
+        (self.Fe,self.Fpha) = pn.getFe(self.dof,sel=self.dof.index(1))
         (Mass,KH) = pn.calcM(rho=rhoW)
         self.RAO = (self.Fe)/np.abs(-omeg**2.0*(Mass+self.Ma)-1j*omeg*self.Bhyd+KH)
         self.updateGraph(x=self.freq,y=self.Ma,x2=self.freq,y2=self.Bhyd,g=self.mplNem,
         t=self.ntbNem,xlab=xlabel,ylab=ylabel)
-
+        
+        # Calculate FS/Kochin grids
+        if self.fsCheck.isChecked():
+            self.X,self.Y,self.etaDiff,self.etaRad = pn.getFS(advOps,depth,omeg,self.RAO)
+            
         print ('Program Finished!')
+
+    def runThread(self,pf=[],f=[],*args,**kwargs):
+        self.genericThread = GenericThread(f,*args,**kwargs)
+        self.genericThread.start()
+        self.genericThread.finished.connect(pf)
 
     def runSimulation(self):
         
@@ -1218,7 +1289,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
             self.time,self.posZ,self.velZ,self.Fpto = wc.simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta)
 
         print('Simulation Finished!')
-
+        
+    def postSim(self):
+        sys.path.insert(0, './Run')
+        import wecSim as wc
         # Output to matplotlib widgets
         diff = len(self.time)-len(self.posZ)
         if diff>0.5:

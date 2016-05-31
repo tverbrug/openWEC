@@ -36,6 +36,20 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+class GenericThread(QtCore.QThread):
+    def __init__(self, function, *args, **kwargs):
+        QtCore.QThread.__init__(self)
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+ 
+    def __del__(self):
+        self.wait()
+ 
+    def run(self):
+        self.function(*self.args,**self.kwargs)
+        return
+
 class EmittingStream(QtCore.QObject):
 
     textWritten = QtCore.pyqtSignal(str)
@@ -1458,7 +1472,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.dtLabel.setText(_translate("MainWindow", "Time Step:", None))
         self.dtBox.setPlaceholderText(_translate("MainWindow", "in seconds", None))
         self.simButton.setText(_translate("MainWindow", "Simulate!", None))
-        self.simButton.clicked.connect(self.runSimulation)
+        self.simButton.clicked.connect(partial(self.runThread,pf=self.postSim,f=self.runSimulation))        
         self.nemConsLabel_2.setText(_translate("MainWindow", "Information Console", None))
         self.nemVisualisation_2.setText(_translate("MainWindow", "Visualisation", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSim), _translate("MainWindow", "Simulation", None))
@@ -1785,7 +1799,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 self.chooseY2.setItemText(1, _translate("MainWindow", "Hydrodynamic Damping", None))
                 self.chooseY2.setItemText(2, _translate("MainWindow", "Wave Excitation Force", None))
                 self.chooseY2.setItemText(3, _translate("MainWindow", "Response Amplitude Operator", None))
-            if self.chooseX1.currentIndex()==2:
+            if self.chooseX2.currentIndex()==2:
                 self.chooseY2.setItemText(0, _translate("MainWindow", "Diffraction Amplitude", None))
                 self.chooseY2.setItemText(1, _translate("MainWindow", "Diffraction Phase Angle", None))
                 self.chooseY2.setItemText(2, _translate("MainWindow", "Radiation Amplitude", None))
@@ -1909,33 +1923,39 @@ class Ui_MainWindow(QtGui.QMainWindow):
                     startMesh = comMesh
                 comMesh.delHorPan()
                 mt.writeMesh(comMesh,'./Calculation/mesh/axisym')
-                ne.createMeshOpt(zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+                #ne.createMeshOpt(zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+                self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+                self.genericThread.start()
             elif(len(self.meshObj)==1):
                 mt.writeMesh(self.meshObj[0],'./Calculation/mesh/axisym')
-                ne.createMeshOpt(zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+                self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+                self.genericThread.start()
             else:
                 print('WARNING: Cannot create mesh when no mesh parts are created!')
-            print('Mesh succesfully created!')
 
         elif self.meshMethod.currentIndex()==2:
             zG = float(self.zGBox.text())
             nPanels = self.convertMesh()
-            ne.createMeshOpt(zG,nPanels,int(0),rho=float(self.rhoBox.text()))
-            print('Mesh succesfully created!')
+            self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+            self.genericThread.start()
 
         elif self.meshMethod.currentIndex()==1:
             zG = float(self.zGBox.text())
             nPanels = self.convertMesh()
-            ne.createMeshOpt(zG,nPanels,int(0),rho=float(self.rhoBox.text()))
-            print('Mesh succesfully created!')
-        
+            self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+            self.genericThread.start()
+           
+        print('Meshing....')
+        self.genericThread.finished.connect(self.visualizeMesh)
+            
+    def visualizeMesh(self):
         # Mesh visualisation
-        
         sys.path.insert(0, './Run')
         import processNemoh as pn
         
         (X,Y,Z,trian) = pn.getMesh()
         self.updateGraph(x=X,y=Y,x2=trian,y2=Z,plotType="Mesh")
+        print('Mesh succesfully created!')
 
     def runNemohCode(self):
         # Delete previous results
@@ -1999,8 +2019,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         # Write CAL file
         ne.writeCalFile(rhoW,waterDepth,omega,zG,self.dof,aO=advOps)
-        ne.runNemoh()
+        self.genericThread = GenericThread(ne.runNemoh)
+        self.genericThread.start()
+        print("Nemoh Simulation Running...")
+        self.genericThread.finished.connect(partial(self.postNemoh,advOps,rhoW,waterDepth))
 
+    def postNemoh(self,advOps,rhoW,depth):
         # Delete content of destination folder
         folder = './Run/Nemoh'
         for fil in os.listdir(folder):
@@ -2029,10 +2053,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
         xlabel = 'Frequency [Hz]'
         ylabel = '$M_a$ and $B_{hyd}$'
         
-        (self.Ma,self.Bhyd,omeg) = pn.getAB(self.dof,sel=self.dof.index(1))
+        isel = self.dof.index(1)
+        (self.Ma,self.Bhyd,omeg) = pn.getAB(self.dof,sel=isel)
         self.freq = omeg/(2*np.pi)
-        (self.Fe,self.Fpha) = pn.getFe(self.dof,sel=self.dof.index(1))
+        (self.Fe,self.Fpha) = pn.getFe(self.dof,sel=isel)
         (Mass,KH) = pn.calcM(rho=rhoW,dof=self.dof)
+        if sum(self.dof)>1:
+            Mass=Mass[isel,isel]
+            KH = KH[isel,isel]
         RAO = (self.Fe)/np.abs(-omeg**2.0*(Mass+self.Ma)-1j*omeg*self.Bhyd+KH)
         self.updateGraph(x=self.freq,y=self.Ma,x2=self.freq,y2=self.Bhyd,g=self.mplNem,
         t=self.ntbNem,xlab=xlabel,ylab=ylabel)
@@ -2042,7 +2070,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         # Calculate FS/Kochin grids
         if self.fsCheck.isChecked():
-            self.X,self.Y,self.etaDiff,self.etaRad = pn.getFS(advOps,waterDepth,omeg,RAO)
+            self.X,self.Y,self.etaDiff,self.etaRad = pn.getFS(advOps,depth,omeg,RAO)
             
         print ('Program Finished!')
 
@@ -2088,6 +2116,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
             # copy to mesh directory
             sh.copyfile(fileName,"./Calculation/mesh/axisym")
         return nrPanels
+        
+    def runThread(self,pf=[],f=[],*args,**kwargs):
+        self.genericThread = GenericThread(f,*args,**kwargs)
+        self.genericThread.start()
+        self.genericThread.finished.connect(pf)
 
     def runSimulation(self):
         
@@ -2124,10 +2157,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         dof = self.dof
         
         # Get degrees of freedom
-        indList = []
+        self.indList = []
         dof2 = [a for a in dof]
         for iD in range(sum(dof)):
-            indList.append(dof2.index(1))
+            self.indList.append(dof2.index(1))
             dof2[dof2.index(1)] = 0
 
         
@@ -2167,7 +2200,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 Bhyd = Bhyd[:,:,iS] + (Bhyd[:,:,iE]-Bhyd[:,:,iS])*(oI-omega[iS])/(omega[iE]-omega[iS])
         else:
             alpha,beta,errorE,Mainf = pn.calcAlphaBeta(10,rho,dof)
-            if sum(dof)>2:
+            if sum(dof)>1:
                 Ma,Bhyd,omega = pn.getAB(dof)
                 MaS,BhydS = pn.irregAB(Ma,Bhyd,omega,M,c,dof,specSS)
                 MaS[2,2] = Mainf
@@ -2198,16 +2231,20 @@ class Ui_MainWindow(QtGui.QMainWindow):
             if sum(dof)<2:
                 self.time,self.posZ,self.velZ,self.Fpto = wc.simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta,moor=self.moorCheck.isChecked(),dof=dof)
             else:
+                self.time,self.posZ,self.velZ = wc.simBody(time,Fex,Fdamp,dampType,M,MaS,BhydS,c,alpha,beta,moor=self.moorCheck.isChecked(),dof=dof)
                 self.Fpto = self.velZ*0.0
         
         print('Simulation Finished!')
-
+        
+    def postSim(self):
+        sys.path.insert(0, './Run')
+        import wecSim as wc
         # Output to matplotlib widgets
 
         xlabel = 'Time [s]'
         ylabel = '$z$ and $v$'
 
-        if sum(dof)<2:        
+        if sum(self.dof)<2:        
             diff = len(self.time)-len(self.posZ)
             if diff>0.5:
                 self.time = np.delete(self.time,0)
@@ -2221,8 +2258,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
             
         else:
             
-            self.updateGraph(x=self.time,y=self.posZ[indList[0],:],x2=self.time,y2=self.velZ[indList[0],:],g=self.mplSim,
-            t=self.ntbSim,xlab=xlabel,ylab=ylabel)
+            self.updateGraph(x=self.time,y=self.posZ[self.indList[0],:],x2=self.time,y2=self.velZ[self.indList[0],:],g=self.mplSim,t=self.ntbSim,xlab=xlabel,ylab=ylabel)
 
         # Change DOF labels in postprocessing window
         self.changeDofLabels()
@@ -2230,7 +2266,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         # Save Results
         saveName = QtGui.QFileDialog.getSaveFileName(self,
         "Save Simulation Results","./Output","Text File (*.txt)")
-        wc.saveResults(saveName,self.time,self.posZ,self.velZ,self.Fpto,li=indList)        
+        wc.saveResults(saveName,self.time,self.posZ,self.velZ,self.Fpto,li=self.indList)        
         
         # Calculate Produced Power
 

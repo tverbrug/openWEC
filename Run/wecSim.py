@@ -306,7 +306,7 @@ def simBody(time,Fex,Fdamp,dampType,M,Ma,B,c,alpha,beta,moor=False,dof=[1,1,1,1,
     t0 = time[0]    
     
     def f(t, y, args):
-        rhs = [0]*int((len(args)-33)/2 + 12)       
+        rhs = [0]*int((len(args)-39)/2 + 12)       #Was 33 instead of 39
         rhs[0] = y[6]
         rhs[1] = y[7]
         rhs[2] = y[8]
