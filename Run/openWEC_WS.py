@@ -1269,11 +1269,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         # Calculate Exciting wave and wave force
         
-        self.genThread = GenericThread(wav.makeWaveFex,Hs,Tm,time,dof,wavName)
-        self.genThread.run()
-        self.genThread.start()
-        time,self.wave,Fex = self.genThread.output
-        #time,self.wave,Fex = wav.makeWaveFex(Hs,Tm,time,dof,wavName)
+        time,self.wave,Fex = wav.makeWaveFex(Hs,Tm,time,dof,wavName)
 
         #---------------------------------------------------------------------------
         # MODEL SIMULATION
