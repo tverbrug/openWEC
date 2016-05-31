@@ -916,43 +916,43 @@ class Ui_MainWindow(QtGui.QMainWindow):
         if test==0:
             xVar = self.freq
             yVar = self.Ma
-            xlabel = 'Frequency [Hz]'
-            ylabel = '$M_a$ [kg]'
+            xlabel = '$Frequency [Hz]$'
+            ylabel = '$Added Mass/Inertia$'
         elif test==1:
-            xVar = self.time
-            yVar = self.wave
-            xlabel = 'Time [s]'
-            ylabel = '$\eta$ [m]'
-        elif test==2:
             xVar = self.freq
             yVar = self.Bhyd
-            xlabel = 'Frequency [Hz]'
-            ylabel = '$B_{hyd}$ [kg/s]'
-        elif test==3:
-            xVar = self.time
-            yVar = self.posZ
-            xlabel = 'Time [s]'
-            ylabel = '$z_{WEC}$ [m]'
-        elif test==4:
+            xlabel = '$Frequency [Hz]$'
+            ylabel = '$Hydrodynamic Damping$'
+        elif test==2:
             xVar = self.freq
             yVar = self.Fe
-            xlabel = 'Frequency [Hz]'
-            ylabel = '$F_{ex}$ [N]'
-        elif test==5:
-            xVar = self.time
-            yVar = self.velZ
-            xlabel = 'Time [s]'
-            ylabel = '$v_{WEC}$ [m/s]'
-        elif test==6:
+            xlabel = '$Frequency [Hz]$'
+            ylabel = '$Excitation Force/Torque$'
+        elif test==3:
             xVar = self.freq
             yVar = self.RAO
-            xlabel = 'Frequency [s]'
-            ylabel = 'RAO'
+            xlabel = '$Frequency [s]$'
+            ylabel = '$RAO$'
+        elif test==4:
+            xVar = self.time
+            yVar = self.wave
+            xlabel = '$Time [s]$'
+            ylabel = '$\eta [m]$'
+        elif test==5:
+            xVar = self.time
+            yVar = self.posZ
+            xlabel = '$Time [s]$'
+            ylabel = '$WEC Response$'
+        elif test==6:
+            xVar = self.time
+            yVar = self.velZ
+            xlabel = '$Time [s]$'
+            ylabel = '$WEC Velocity$'
         elif test==7:
             xVar = self.time
             yVar = self.Fpto
-            xlabel = 'Time [s]'
-            ylabel = '$F_{PTO}$ [N]'
+            xlabel = '$Time [s]$'
+            ylabel = '$PTO Force/Torque$'
         elif test==8:
             xVar = (self.X,self.Y)
             yVar = np.abs(self.etaDiff)
@@ -972,7 +972,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
             xVar = (self.X,self.Y)
             yVar = np.angle(self.etaRad)
             xlabel = '$X [m]$'
-            ylabel = '$Y [m]$'            
+            ylabel = '$Y [m]$'      
         # Plot the variables
         self.updateGraph(x=xVar,y=yVar,g=mpl,t=ntb,xlab=xlabel,ylab=ylabel,plotType=pT)
 
