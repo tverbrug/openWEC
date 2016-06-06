@@ -46,7 +46,7 @@ def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta,moor=False,dof=[0,0
         for iB in range(0,len(rhs)-2):
             I = I + '-y[' + str(2+iB) + ']'
             rhs[iB+2] = args[iB+(len(args)-5)/2+5]*y[iB+2]+args[iB+5]*y[1]
-        rhs[1] = eval('(args[3]-args[-1]-args[4]*y[1]-args[2]*y[0]' + I + ')/(args[0]+args[1])')
+        rhs[1] = eval('(args[3]-args[-1]-args[4][1]*y[1]-(args[2]+args[4][2])*y[0]' + I + ')/(args[0]+args[1]+args[4][0])')
         return rhs
 
     # Define Tuning
@@ -95,7 +95,7 @@ def simBody1DOF(time,Fex,Fdamp,dampType,M,Mainf,c,alpha,beta,moor=False,dof=[0,0
         tim[iF] = r.t
         arg_f[3] = Fex[iF]
         if dampType == 0:
-            Fp[iF] = Fdamp*v[iF]
+            Fp[iF] = Fdamp[1]*v[iF]
         else:
             dummy = ptoForce(r,Fdamp,Fex[iF],c)
             arg_f[4] = dummy
@@ -138,7 +138,7 @@ def simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd,moor=False,dof=[0,0,1,0,0
     def fL(t, y, args):
         rhs = [0]*2       
         rhs[0] = y[1]
-        rhs[1] = (args[4] - args[-1] - args[3]*y[1] - args[5]*y[1] - args[1]*y[0])/(args[0] + args[2])
+        rhs[1] = (args[4] - args[-1] - (args[3]+args[5][1])*y[1] - (args[1]+args[5][2])*y[0])/(args[0] + args[2] + args[5][0])
         return rhs
 
     # Define Tuning
@@ -187,7 +187,7 @@ def simBodyReg1DOF(time,Fex,Fdamp,dampType,M,c,Ma,Bhyd,moor=False,dof=[0,0,1,0,0
             arg_f[5] = dummy
             Fp = np.append(Fp,dummy)
         else:
-            Fp = np.append(Fp,Fdamp*r.y[1])
+            Fp = np.append(Fp,Fdamp[1]*r.y[1])
         if moor:
             arg_f[-1] = 0.1 * ms.simLines(moorLib,z[iF],v[iF],tim[iF],dt,dof)
         r.set_f_params(arg_f)

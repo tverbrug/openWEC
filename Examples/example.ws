@@ -1,12 +1,12 @@
 Mesh Properties
-8	 Float Diameter
+5	 Float Diameter
 0	 Water Depth
 1025.0	 Density
 200	 Number of Mesh Panels
 Nemoh Properties
 0.2	 Starting Frequency
 2.5	 Ending Frequency
-50	 Number of Frequency Steps
+100	 Number of Frequency Steps
 False	 Include Wave direction?
 	 Starting wave direction
 	 Ending wave direction
@@ -26,8 +26,8 @@ False	 Include Wave Free Surface?
 Time Domain Properties
 1	 Wave Type
 1.25	 Wave Height
-4.5	 Wave Period
-1	 Damping Type
-35000	 Damping Value
-1000	 Simulation Time
+8.0	 Wave Period
+0	 Damping Type
+0;100000;0	 Damping Value
+500	 Simulation Time
 0.02	 Simulation Time Step

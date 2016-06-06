@@ -83,6 +83,54 @@ class MyStaticMplCanvas(MyMplCanvas):
         s = [0,0]
         self.axes.plot(t, s)
 
+class CustomSpec(QtGui.QWidget):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
+        self.setupUi(self)
+    def setupUi(self, Form):
+        Form.setObjectName(_fromUtf8("Form"))
+        Form.resize(442, 388)
+        self.verticalLayout_2 = QtGui.QVBoxLayout(Form)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.loadCS = QtGui.QPushButton(Form)
+        self.loadCS.setObjectName(_fromUtf8("loadCS"))
+        self.verticalLayout_2.addWidget(self.loadCS)
+
+        self.mpl = MyStaticMplCanvas(Form, width=5, height=4, dpi=100)
+        self.ntb = NavigationToolbar(self.mpl, Form)
+        self.verticalLayout_2.addWidget(self.mpl)
+        self.verticalLayout_2.addWidget(self.ntb)
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(_translate("Form", "Form", None))
+        self.loadCS.setText(_translate("Form", "Load spectrum", None))
+        self.loadCS.clicked.connect(self.loadSpec)
+        self.ntb._views.clear()
+    
+    def loadSpec(self):
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open Spectrum','./',"ASCII Files (*.txt *.csv *.dat)")
+        spec = np.loadtxt(str(fname))
+        
+        g = self.mpl
+        t = self.ntb        
+        t.update()
+        g.fig.delaxes(g.axes)
+        g.axes = g.fig.add_axes([0.20, 0.17, 0.75, 0.75])
+        g.axes.plot(spec[:,0],spec[:,1],color = '#468499')
+        g.axes.set_xlabel("Frequency")
+        g.axes.set_ylabel("Spectrum")
+        g.draw()
+        g.axes.hold(False)
+        
+        # Copy Result files to Simulation directory
+        sh.copy(fname,"./Run/spec.dat")
+        
+    def close(self):
+        self.hide()
+        
 class MoorDynPopup(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -541,6 +589,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.comboBox.addItem(_fromUtf8(""))
         self.comboBox.addItem(_fromUtf8(""))
         self.comboBox.addItem(_fromUtf8(""))
+        self.comboBox.addItem(_fromUtf8(""))        
         self.verticalLayout_7.addWidget(self.comboBox)
         self.sketchShape = QtGui.QLabel(self.tabMesh)
         self.sketchShape.setText(_fromUtf8(""))
@@ -958,6 +1007,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.wavTypeLabel.setFont(font)
         self.wavTypeLabel.setObjectName(_fromUtf8("wavTypeLabel"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.wavTypeLabel)
+        self.waveLayout = QtGui.QHBoxLayout()
+        self.waveLayout.setObjectName(_fromUtf8("waveLayout"))
         self.wavType = QtGui.QComboBox(self.tabSim)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Raleway"))
@@ -965,7 +1016,15 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.wavType.setObjectName(_fromUtf8("wavType"))
         self.wavType.addItem(_fromUtf8(""))
         self.wavType.addItem(_fromUtf8(""))
-        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.wavType)
+        self.waveLayout.addWidget(self.wavType)
+        self.checkCS = QtGui.QCheckBox(self.tabSim)
+        self.checkCS.setObjectName(_fromUtf8("checkCS"))
+        self.waveLayout.addWidget(self.checkCS)
+        self.specButton = QtGui.QPushButton(self.tabSim)
+        self.specButton.setEnabled(False)
+        self.specButton.setObjectName(_fromUtf8("specButton"))
+        self.waveLayout.addWidget(self.specButton)
+        self.formLayout.setLayout(1, QtGui.QFormLayout.FieldRole, self.waveLayout)        
         self.wavHLabel = QtGui.QLabel(self.tabSim)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Raleway"))
@@ -1009,9 +1068,27 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.fdampLabel.setFont(font)
         self.fdampLabel.setObjectName(_fromUtf8("fdampLabel"))
         self.formLayout.setWidget(7, QtGui.QFormLayout.LabelRole, self.fdampLabel)
-        self.fdampBox = QtGui.QLineEdit(self.tabSim)
-        self.fdampBox.setObjectName(_fromUtf8("fdampBox"))
-        self.formLayout.setWidget(7, QtGui.QFormLayout.FieldRole, self.fdampBox)
+        self.fdampLayout = QtGui.QHBoxLayout()
+        self.fdampLayout.setObjectName(_fromUtf8("fdampLayout"))
+        self.msupLabel = QtGui.QLabel(self.tabSim)
+        self.msupLabel.setObjectName(_fromUtf8("msupLabel"))
+        self.fdampLayout.addWidget(self.msupLabel)
+        self.msupEdit = QtGui.QLineEdit(self.tabSim)
+        self.msupEdit.setObjectName(_fromUtf8("msupEdit"))
+        self.fdampLayout.addWidget(self.msupEdit)
+        self.bsupLabel = QtGui.QLabel(self.tabSim)
+        self.bsupLabel.setObjectName(_fromUtf8("bsupLabel"))
+        self.fdampLayout.addWidget(self.bsupLabel)
+        self.bsupEdit = QtGui.QLineEdit(self.tabSim)
+        self.bsupEdit.setObjectName(_fromUtf8("bsupEdit"))
+        self.fdampLayout.addWidget(self.bsupEdit)
+        self.csupLabel = QtGui.QLabel(self.tabSim)
+        self.csupLabel.setObjectName(_fromUtf8("csupLabel"))
+        self.fdampLayout.addWidget(self.csupLabel)
+        self.csupEdit = QtGui.QLineEdit(self.tabSim)
+        self.csupEdit.setObjectName(_fromUtf8("csupEdit"))
+        self.fdampLayout.addWidget(self.csupEdit)
+        self.formLayout.setLayout(7, QtGui.QFormLayout.FieldRole, self.fdampLayout)
         
         verticalSpacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.formLayout.setItem(8, QtGui.QFormLayout.LabelRole, verticalSpacer)        
@@ -1367,6 +1444,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.comboBox.setItemText(5, _translate("openWEC", "Wedge", None))
         self.comboBox.setItemText(6, _translate("openWEC", "Hemisphere", None))
         self.comboBox.setItemText(7, _translate("openWEC", "Hemicylinder", None))
+        self.comboBox.setItemText(8, _translate("openWEC", "Torus", None))
         self.comboBox.currentIndexChanged.connect(self.meshTypeFig)
         self.propLabel.setText(_translate("openWEC", "Properties", None))
         self.prop1Label.setText(_translate("openWEC", "Length", None))
@@ -1449,17 +1527,28 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.wavTypeLabel.setText(_translate("MainWindow", "Wave Type:", None))
         self.wavType.setItemText(0, _translate("MainWindow", "Regular", None))
         self.wavType.setItemText(1, _translate("MainWindow", "Irregular", None))
+        self.checkCS.setText(_translate("openWEC", "Custom Spectrum", None))
+        self.checkCS.setCheckable(False)
+        self.checkCS.clicked.connect(self.displayMessageSim)
+        self.specButton.setText(_translate("openWEC", "Edit...", None))
+        self.specButton.clicked.connect(self.runCustomSpec)
         self.wavType.currentIndexChanged.connect(self.displayMessageSim)
         self.wavHLabel.setText(_translate("MainWindow", "Wave Height:", None))
         self.wavHBox.setPlaceholderText(_translate("MainWindow", "in meter", None))
         self.wavTLabel.setText(_translate("MainWindow", "Wave Period:", None))
         self.wavTBox.setPlaceholderText(_translate("MainWindow", "in seconds", None))
         self.ptoProp.setText(_translate("MainWindow", "PTO Properties", None))
-        self.fdampLabel.setText(_translate("MainWindow", "Damping Value:", None))
+        self.fdampLabel.setText(_translate("openWEC", "PTO Values:", None))
         self.dampTypeLabel.setText(_translate("openWEC", "Damping Type:", None))
         self.dampSelect.setItemText(0, _translate("openWEC", "Linear", None))
         self.dampSelect.setItemText(1, _translate("openWEC", "Coulomb", None))
-        self.fdampBox.setPlaceholderText(_translate("MainWindow", "in N for Coulomb, in kg/s for Linear", None))
+        self.dampSelect.currentIndexChanged.connect(self.changePtoLabels)
+        self.msupLabel.setText(_translate("openWEC", "Mpto: ", None))
+        self.msupEdit.setPlaceholderText(_translate("openWEC", "Exernal Mass in kg", None))
+        self.bsupLabel.setText(_translate("openWEC", "Bpto: ", None))
+        self.bsupEdit.setPlaceholderText(_translate("openWEC", "External Damping in kg/s", None))
+        self.csupLabel.setText(_translate("openWEC", "Cpto: ", None))
+        self.csupEdit.setPlaceholderText(_translate("openWEC", "External Spring in kg/s²", None))
         self.moorPropLabel.setText(_translate("openWEC", "Mooring Properties", None))
         self.moorCheck.setText(_translate("openWEC", "Enable Mooring Lines", None))
         self.moorCheck.clicked.connect(self.changeMoorDyn)
@@ -1765,11 +1854,23 @@ class Ui_MainWindow(QtGui.QMainWindow):
             self.prop1Label.setText(_translate("openWEC", "Diameter", None))
             self.prop2Label.setText(_translate("openWEC", "Length", None))
             self.prop3Label.setText(_translate("openWEC", "None", None))            
+        if self.comboBox.currentIndex()==8:
+            self.sketchShape.setPixmap(QtGui.QPixmap(_fromUtf8("src/torus.png")))
+            self.prop1Label.setText(_translate("openWEC", "Diam. Out", None))
+            self.prop2Label.setText(_translate("openWEC", "Diam. In", None))
+            self.prop3Label.setText(_translate("openWEC", "None", None))            
 
     def displayMessageSim(self):
         if self.wavType.currentIndex()==1:
+            self.checkCS.setCheckable(True)
             print("ATTENTION!\n"+
                 "When choosing irregular waves, you need to have selected the IRF calculation in the Nemoh tab!!")
+            if self.checkCS.isChecked():
+                self.specButton.setEnabled(True)
+            else:
+                self.specButton.setEnabled(False)
+        else:
+            self.specButton.setDisabled(True)
 
     def plotVariables(self,plotWindow=1):
         if plotWindow==1:
@@ -1875,6 +1976,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
             yC = float(self.Yins.text())
             zC = float(self.Zins.text())        
             ob = mt.hemicylinder(diameter,height,[xC,yC,zC])
+        elif self.comboBox.currentIndex()==8:
+            # Hemicylinder
+            diamOut = float(self.prop1.text())  
+            diamIn = float(self.prop2.text())
+            xC = float(self.Xins.text())
+            yC = float(self.Yins.text())
+            zC = float(self.Zins.text())        
+            ob = mt.torus(diamOut,diamIn,[xC,yC,zC])
         
         # Add object to list        
         self.meshObj.append(ob)
@@ -2166,7 +2275,13 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         # Get Damping force
         dampType = self.dampSelect.currentIndex()
-        Fdamp = float(self.fdampBox.text())
+        if dampType == 0:
+            Fdamp = []
+            Fdamp.append(float(self.msupEdit.text()))
+            Fdamp.append(float(self.bsupEdit.text()))
+            Fdamp.append(float(self.csupEdit.text()))
+        else:
+            Fdamp = float(self.fdampEdit.text())
 
         # Get Simulation Parameters
         tSim = int(self.simTimeBox.text())
@@ -2182,7 +2297,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         # Calculate Exciting wave and wave force
         
-        time,self.wave,Fex,specSS = wav.makeWaveFex(Hs,Tm,time,dof,wavName,Sout=True)
+        time,self.wave,Fex,specSS = wav.makeWaveFex(Hs,Tm,time,dof,wavName,Sout=True,CS=self.checkCS.isChecked())
 
         # Preprocessing: calculate body parameters
         
@@ -2215,9 +2330,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
         #---------------------------------------------------------------------------
 
         # First Run
-
-        print('Wave height: ' + str(Hs) + ' m')
-        print('Wave period: ' + str(Tm) + ' s')
+        
+        if self.checkCS.isChecked():
+            print('Custom spectrum selected')
+        else:
+            print('Wave height: ' + str(Hs) + ' m')
+            print('Wave period: ' + str(Tm) + ' s')
         print('Simulation Start!')
         
         
@@ -2406,7 +2524,60 @@ class Ui_MainWindow(QtGui.QMainWindow):
             self.dofPlotU.setItemText(iD,nameDof[indDof])
             self.dofPlotL.setItemText(iD,nameDof[indDof])
 
-
+    def changePtoLabels(self):
+        if self.dampSelect.currentIndex() == 0:
+            # Linear Damping with 3 options Mext, Bext, Cext
+            self.fdampEdit.deleteLater()
+            self.formLayout.removeItem(self.fdampLayout)
+            # Set UI
+            self.fdampLayout = QtGui.QHBoxLayout()
+            self.fdampLayout.setObjectName(_fromUtf8("fdampLayout"))
+            self.msupLabel = QtGui.QLabel(self.tabSim)
+            self.msupLabel.setObjectName(_fromUtf8("msupLabel"))
+            self.fdampLayout.addWidget(self.msupLabel)
+            self.msupEdit = QtGui.QLineEdit(self.tabSim)
+            self.msupEdit.setObjectName(_fromUtf8("msupEdit"))
+            self.fdampLayout.addWidget(self.msupEdit)
+            self.bsupLabel = QtGui.QLabel(self.tabSim)
+            self.bsupLabel.setObjectName(_fromUtf8("bsupLabel"))
+            self.fdampLayout.addWidget(self.bsupLabel)
+            self.bsupEdit = QtGui.QLineEdit(self.tabSim)
+            self.bsupEdit.setObjectName(_fromUtf8("bsupEdit"))
+            self.fdampLayout.addWidget(self.bsupEdit)
+            self.csupLabel = QtGui.QLabel(self.tabSim)
+            self.csupLabel.setObjectName(_fromUtf8("csupLabel"))
+            self.fdampLayout.addWidget(self.csupLabel)
+            self.csupEdit = QtGui.QLineEdit(self.tabSim)
+            self.csupEdit.setObjectName(_fromUtf8("csupEdit"))
+            self.fdampLayout.addWidget(self.csupEdit)
+            self.formLayout.setLayout(7, QtGui.QFormLayout.FieldRole, self.fdampLayout)            
+            # Retranslate UI
+            self.fdampLabel.setText(_translate("openWEC", "PTO Values:", None))
+            self.msupLabel.setText(_translate("openWEC", "Mpto: ", None))
+            self.msupEdit.setPlaceholderText(_translate("openWEC", "Exernal Mass in kg", None))
+            self.bsupLabel.setText(_translate("openWEC", "Bpto: ", None))
+            self.bsupEdit.setPlaceholderText(_translate("openWEC", "External Damping in kg/s", None))
+            self.csupLabel.setText(_translate("openWEC", "Cpto: ", None))
+            self.csupEdit.setPlaceholderText(_translate("openWEC", "External Spring in kg/s²", None))        
+        else:
+            self.msupLabel.deleteLater()
+            self.bsupLabel.deleteLater()
+            self.csupLabel.deleteLater()
+            self.msupEdit.deleteLater()
+            self.bsupEdit.deleteLater()
+            self.csupEdit.deleteLater()            
+            self.formLayout.removeItem(self.fdampLayout)
+            # Set UI
+            self.fdampLayout = QtGui.QHBoxLayout()
+            self.fdampLayout.setObjectName(_fromUtf8("fdampLayout"))
+            self.fdampEdit = QtGui.QLineEdit(self.tabSim)
+            self.fdampEdit.setObjectName(_fromUtf8("fdampEdit"))
+            self.fdampLayout.addWidget(self.fdampEdit)
+            self.formLayout.setLayout(7, QtGui.QFormLayout.FieldRole, self.fdampLayout)            
+            # Retranslate UI
+            self.fdampLabel.setText(_translate("openWEC", "PTO Force:", None))
+            self.fdampEdit.setPlaceholderText(_translate("openWEC", "PTO Force in Newton", None))
+            
     def openFile(self):
         
         sys.path.insert(0, './Run')
@@ -2467,7 +2638,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.wavHBox.setText(inData[47].split('\t')[0])
         self.wavTBox.setText(inData[48].split('\t')[0])
         self.dampSelect.setCurrentIndex(int(inData[49].split('\t')[0]))
-        self.fdampBox.setText(inData[50].split('\t')[0])
+        if int(inData[49].split('\t')[0])==0:
+            self.msupEdit.setText(inData[50].split('\t')[0].split(';')[0])
+            self.bsupEdit.setText(inData[50].split('\t')[0].split(';')[1])
+            self.csupEdit.setText(inData[50].split('\t')[0].split(';')[2])
+        else:
+            self.fdampEdit.setText(inData[50].split('\t')[0])
         self.simTimeBox.setText(inData[51].split('\t')[0])
         self.dtBox.setText(inData[52].split('\t')[0])
         # Mesh Objects
@@ -2571,7 +2747,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
             f.write(self.wavHBox.text() + "\t Wave Height\n")
             f.write(self.wavTBox.text() + "\t Wave Period\n")
             f.write(str(self.dampSelect.currentIndex()) + "\t Damping Type\n")
-            f.write(self.fdampBox.text() + "\t Damping Value\n")
+            if self.dampSelect.currentIndex()==0:
+                f.write(self.msupEdit.text()+";"+self.bsupEdit.text()+";"+self.csupEdit.text() + "\t Damping Value\n")
+            else:
+                f.write(self.fdampEdit.text() + "\t Damping Value\n")
             f.write(self.simTimeBox.text() + "\t Simulation Time\n")
             f.write(self.dtBox.text() + "\t Simulation Time Step\n")
             # Save Mesh Parts
@@ -2632,6 +2811,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
         cursor.insertText(text)
         self.postMessBox.setTextCursor(cursor)
         self.postMessBox.ensureCursorVisible()
+
+    def runCustomSpec(self):
+        print "Opening Custom Spectrum Tool..."
+        self.w = CustomSpec()
+        self.w.show()
 
     def runMoorDynConfig(self):
         print "Opening MoorDyn Configuration Tool..."

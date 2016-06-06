@@ -48,7 +48,7 @@ True	 Include Wave Free Surface?
 2	 Wave Height
 8	 Wave Period
 0	 Damping Type
-100000	 Damping Value
+0;100000;0	Damping Value
 1000	 Simulation Time
 0.04	 Simulation Time Step
 ------------------------------------- Mesh Objects -------------------------------------

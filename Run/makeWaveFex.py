@@ -7,8 +7,9 @@ Created on Fri Feb 06 16:19:53 2015
 
 import processNemoh as pn
 import wecFunctions as wf
+import numpy as np
 
-def makeWaveFex(Hs,Tm,time,dof,wavType,Sout=False):
+def makeWaveFex(Hs,Tm,time,dof,wavType,Sout=False,CS=False):
 
 #-----------------------------------------------------------------------------
 # CALCULATION
@@ -19,7 +20,17 @@ def makeWaveFex(Hs,Tm,time,dof,wavType,Sout=False):
     freqs = 1.0/period
     
 # Calculate the spectral values
-    specSS = wf.spectralValue(Hs,Tm,freqs)
+    if CS:
+        try:
+            data = np.loadtxt('./Run/spec.dat')
+            f = data[:,0]
+            s = data[:,1]
+            specSS = np.interp(freqs,f,s)
+        except:
+            print("Warning! No custom spectrum defined, default spectrum selected!")
+            specSS = wf.spectralValue(Hs,Tm,freqs)
+    else:
+        specSS = wf.spectralValue(Hs,Tm,freqs)
     
 # Get hydrodynamic coefficients from Nemoh
     FeAmp,FePha = pn.getFe(dof)

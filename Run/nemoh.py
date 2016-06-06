@@ -90,7 +90,7 @@ def createMeshOpt(zG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
         fid.close()
         os.chdir('Calculation')
         if pt.system()=='Linux':
-            os.system('meshL')
+            os.system('./meshL')
         else:
             os.system('Mesh.exe')
         os.chdir('../')
@@ -109,7 +109,7 @@ def createMeshOpt(zG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
             fid.close()
             os.chdir('Calculation')
             if pt.system()=='Linux':
-                os.system('meshL')
+                os.system('./meshL')
             else:
                 os.system('Mesh.exe')
             os.chdir('../')
@@ -211,9 +211,9 @@ def runNemoh(nbody=1):
         for iB in range(nbody):
             sh.copyfile('./mesh/axisym{:d}.dat'.format(iB+1),'axisym{:d}.dat'.format(iB+1))
     if pt.system()=='Linux':
-        os.system('../Nemoh/preProc')
-        os.system('../Nemoh/solver')
-        os.system('../Nemoh/postProc')
+        os.system('./preProc')
+        os.system('./solver')
+        os.system('./postProc')
     else:
         os.system('preProcessor.exe')
         os.system('Solver.exe')
