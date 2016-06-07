@@ -23,9 +23,7 @@ Line     LineType  UnstrLen  NumSegs   NodeAnch  NodeFair  Flags/Outputs
 0        WaveKin      - wave kinematics flag (0=neglect, the only option currently supported)
 3.0e0    kBot         - bottom stiffness
 3.0e0    cBot         - bottom damping
-300.000000      WtrDpth      - water depth
-5.0      CdScaleIC    - factor by which to scale drag coefficients during dynamic relaxation IC gen
-0.001    threshIC     - threshold for IC convergence
+350.000000      WtrDpth      - water depth0.001    threshIC     - threshold for IC convergence
 -------------------------- OUTPUTS --------------------------------
 FairTen1 FairTen2 FairTen3
 --------------------- need this line ------------------

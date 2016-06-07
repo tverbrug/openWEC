@@ -2246,6 +2246,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         import makeWaveFex as wav
         import processNemoh as pn
         import wecSim as wc
+        import moorSim as ms
 
         # Get Wave Parameters
         Hs = float(self.wavHBox.text())
@@ -2338,6 +2339,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
             print('Wave period: ' + str(Tm) + ' s')
         print('Simulation Start!')
         
+        # Set correct depth in mooring simulation
+        if self.moorCheck.isChecked():
+            ms.changeDepth(self.waterDepthBox.text())
         
         if (wavType==0):
             if sum(dof)<2:

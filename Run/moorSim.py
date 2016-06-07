@@ -100,3 +100,25 @@ def openLines(fileName):
         count += 1
 
     return mdLines
+    
+def changeDepth(strDepth):
+    with open('./Mooring/lines.txt','r') as f:
+        data = f.readlines()
+        
+    # Find water depth line
+    for iL in range(len(data)):
+        if data[iL].find('WtrDpth') >= 0:
+            indDepth = iL
+            
+    try:
+        depth = float(strDepth)
+        if depth < 0.001:
+            depth = 4000
+        data[indDepth] = '{:f}      WtrDpth      - water depth\n'.format(depth)
+    except:
+        print("WARNING: no water depth specified in Mesh tab, default value is used for Mooring Simulation")
+        
+    with open('./Mooring/lines.txt','w') as f:
+        f.writelines(data)
+            
+    

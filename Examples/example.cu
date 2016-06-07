@@ -13,7 +13,7 @@
 	 Angle of Rotation
 	 Rotation axis 1
 	 Rotation axis 2
-0	 Water Depth
+300	 Water Depth
 -1.0	 Centre of Gravity Location
 1025.0	 Density
 150	 Number of Mesh Panels
