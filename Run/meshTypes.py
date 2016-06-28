@@ -871,8 +871,8 @@ class torus:
         self.X = []
         self.Y = []
         self.Z = []
-        R = self.diamOut
-        r = self.diamIn
+        R = self.diamOut/2.0
+        r = self.diamIn/2.0
         
         for iT in range(Ntheta):
             for iP in range(Nphi):
