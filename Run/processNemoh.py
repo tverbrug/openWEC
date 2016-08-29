@@ -10,6 +10,7 @@ Function of a floating WEC by a sum of complex exponential functions.
 
 import numpy as np
 import nemoh as ne
+import os
 
 def calcAlphaBeta(nSel,rho,dof):
 
@@ -442,6 +443,15 @@ def getFS(advOps,depth,omeg,RAO):
     Lx = advOps['fsLengthX']
     Ly = advOps['fsLengthY']
     
+    # Check for array simulation
+    isArray = advOps['parkCheck']
+    if isArray and os.path.isfile('./Run/parkconfig.dat'):
+        with open('./Run/parkconfig.dat') as f:
+            allData = f.readlines()
+        nbody = int(allData[0])
+    else:
+        nbody = 1
+    
     X = np.linspace(-Lx/2.0,Lx/2.0,Nx)
     Y = np.linspace(-Ly/2.0,Ly/2.0,Ny)
     X,Y = np.meshgrid(X,Y)
@@ -460,6 +470,7 @@ def getFS(advOps,depth,omeg,RAO):
     modE2 = np.zeros(np.shape(X))
     phaE1 = np.zeros(np.shape(X))
     phaE2 = np.zeros(np.shape(X))
+    etaR = np.zeros(np.shape(X),dtype=complex)
     
     iL = 0
     for iX in range(np.size(X,1)):
@@ -468,16 +479,29 @@ def getFS(advOps,depth,omeg,RAO):
             iL += 1
             
     # Read radiation
+    if nbody>1:
+        for iB in range(nbody):
+            spaces = " "*(5-len(str(iB+2)))
+            with open('./Run/Nemoh/freesurface.'  + spaces +  '{:d}.dat'.format(iB+2),'r') as f:
+                allEta = f.readlines()
+            iL = 0
+            for iX in range(np.size(X,1)):
+                for iY in range(np.size(X,0)):
+                    (modE2[iY,iX],phaE2[iY,iX]) = [float(a) for a in allEta[iL+2].split()[2:4]]
+                    iL += 1
+            etaR += modE2*np.exp(1j*phaE2)
+        modE2 = np.abs(etaR)
+        phaE2 = np.angle(etaR)
+    else:
+        spaces = " "*(5-len(str(iMax+2)))
+        with open('./Run/Nemoh/freesurface.'  + spaces +  '{:d}.dat'.format(iMax+2),'r') as f:
+            allEta = f.readlines()
             
-    spaces = " "*(5-len(str(iMax+2)))
-    with open('./Run/Nemoh/freesurface.'  + spaces +  '{:d}.dat'.format(iMax+2),'r') as f:
-        allEta = f.readlines()
-        
-    iL = 0
-    for iX in range(np.size(X,1)):
-        for iY in range(np.size(X,0)):
-            (modE2[iY,iX],phaE2[iY,iX]) = [float(a) for a in allEta[iL+2].split()[2:4]]
-            iL += 1
+        iL = 0
+        for iX in range(np.size(X,1)):
+            for iY in range(np.size(X,0)):
+                (modE2[iY,iX],phaE2[iY,iX]) = [float(a) for a in allEta[iL+2].split()[2:4]]
+                iL += 1
     
     etaDiff = modE1 * np.exp(1j*(phaE1-3.0*np.pi/2.0))
     etaRad = 1j*omeg*RAO*(modE2 * np.exp(1j*(phaE2-3.0*np.pi/2.0)))

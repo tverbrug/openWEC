@@ -11,6 +11,7 @@ import math
 import os
 import shutil as sh
 import platform as pt
+import numpy as np
 
 # Used Functions
 
@@ -114,7 +115,46 @@ def createMeshOpt(zG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
                 os.system('Mesh.exe')
             os.chdir('../')
 
+def openParkFile(fname):
+        if os.path.isfile('./Run/parkconfig.dat'):
+            with open(fname) as f:
+                allData = f.readlines()
+            nrCoord = int(allData[0])
+            coordList = []
+            for iC in range(nrCoord):
+                xLoc = float(allData[iC+1].split()[0])
+                yLoc = float(allData[iC+1].split()[1])                
+                coordList.append(np.array([xLoc,yLoc]))
+        return coordList
+        
+def makeArray(coordList):
+    baseMesh = np.loadtxt('./Calculation/mesh/axisym.dat',skiprows=1)
+    nPoint = int(np.max(baseMesh[:,0]))
+    nPanel = len(baseMesh[nPoint+1::,0])-1
+    panels = baseMesh[nPoint+1:-1,:].astype(int)
+    xBase = baseMesh[0:nPoint,1]
+    yBase = baseMesh[0:nPoint,2]
+    for iB in range(len(coordList)):
+        xTr = coordList[iB][0]
+        yTr = coordList[iB][1]
+        with open('./Calculation/mesh/axisym{:d}.dat'.format(iB+1),'w') as f:
+            f.write('                    2          0\n')
+            for iP in range(nPoint):
+                f.write('             {0:d}             {1:f}             {2:f}             {3:f}\n'.format(iP+1,xBase[iP]+xTr,yBase[iP]+yTr,baseMesh[iP,3]))
+            f.write('             0          0.00          0.00          0.00\n')
+            for iP in range(nPanel):
+                f.write('               {0:d}               {1:d}               {2:d}               {3:d}\n'.format(panels[iP,0],panels[iP,1],panels[iP,2],panels[iP,3]))
+            f.write('               {0:d}               {1:d}               {2:d}               {3:d}\n'.format(0,0,0,0))
+        with open('./Calculation/mesh/axisym{:d}_info.dat'.format(iB+1),'w') as f:
+            f.write('    {0:d}     {1:d} Number of points and number of panels'.format(nPoint,nPanel))
+
 def writeCalFile(rhoW,depW,omega,zG,dof,aO={},nbody=1,xG=[0.0]):
+    # In case of array simulation, do stuff
+    if aO['parkCheck']:
+        fname = './Run/parkconfig.dat'
+        coordList = openParkFile(fname)
+        nbody = len(coordList)
+        makeArray(coordList)
     # Read info on the mesh
     nrNode = [0]*nbody
     nrPanel = [0]*nbody
@@ -202,7 +242,8 @@ def writeCalFile(rhoW,depW,omega,zG,dof,aO={},nbody=1,xG=[0.0]):
         fid.write('0	2	1000.	2.	! Free surface elevation 	! Number of points in x direction (0 for no calcutions) and y direction and dimensions of domain in x and y direction	\n')
     
     fid.close()
-
+    return nbody
+    
 def runNemoh(nbody=1):
     os.chdir('./Calculation')
     if nbody == 1:

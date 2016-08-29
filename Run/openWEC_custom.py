@@ -21,6 +21,7 @@ import sys
 import os
 import shutil as sh
 import numpy as np
+import glob
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -82,6 +83,151 @@ class MyStaticMplCanvas(MyMplCanvas):
         t = [0,0]
         s = [0,0]
         self.axes.plot(t, s)
+        
+class ParkConfig(QtGui.QWidget):
+    def __init__(self):
+        QtGui.QWidget.__init__(self)
+        self.setupUi(self)
+    def setupUi(self, Form):
+        Form.setObjectName(_fromUtf8("Form"))
+        Form.resize(758, 586)
+        self.horizontalLayout = QtGui.QHBoxLayout(Form)
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.formLayout = QtGui.QFormLayout()
+        self.formLayout.setObjectName(_fromUtf8("formLayout"))
+        self.titleLabel = QtGui.QLabel(Form)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Arial"))
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.titleLabel.setFont(font)
+        self.titleLabel.setObjectName(_fromUtf8("titleLabel"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.titleLabel)
+        self.xLocLabel = QtGui.QLabel(Form)
+        self.xLocLabel.setObjectName(_fromUtf8("xLocLabel"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.xLocLabel)
+        self.yLocLabel = QtGui.QLabel(Form)
+        self.yLocLabel.setObjectName(_fromUtf8("yLocLabel"))
+        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.yLocLabel)
+        self.xLocEdit = QtGui.QLineEdit(Form)
+        self.xLocEdit.setObjectName(_fromUtf8("xLocEdit"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.xLocEdit)
+        self.yLocEdit = QtGui.QLineEdit(Form)
+        self.yLocEdit.setObjectName(_fromUtf8("yLocEdit"))
+        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.yLocEdit)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.formLayout.setItem(1, QtGui.QFormLayout.LabelRole, spacerItem)
+        self.verticalLayout.addLayout(self.formLayout)
+        self.addButton = QtGui.QPushButton(Form)
+        self.addButton.setObjectName(_fromUtf8("addButton"))
+        self.addButton.clicked.connect(self.addToList)
+        self.verticalLayout.addWidget(self.addButton)
+        self.arrayList = QtGui.QListWidget(Form)
+        self.arrayList.setObjectName(_fromUtf8("arrayList"))
+        self.verticalLayout.addWidget(self.arrayList)
+        self.deleteButton = QtGui.QPushButton(Form)
+        self.deleteButton.setObjectName(_fromUtf8("deleteButton"))
+        self.deleteButton.clicked.connect(self.remFromList)
+        self.verticalLayout.addWidget(self.deleteButton)
+        spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem1)
+        self.doneButton = QtGui.QPushButton(Form)
+        self.doneButton.setObjectName(_fromUtf8("doneButton"))
+        self.doneButton.clicked.connect(self.saveParkFile)
+        self.verticalLayout.addWidget(self.doneButton)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
+        self.verticalLayout_3 = QtGui.QVBoxLayout()
+        self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.coordList=[]
+        
+        self.mpl = MyStaticMplCanvas(Form, width=5, height=4, dpi=100)
+        self.ntb = NavigationToolbar(self.mpl, Form)
+        
+        self.verticalLayout_3.addWidget(self.mpl)
+        self.verticalLayout_3.addWidget(self.ntb)
+        self.horizontalLayout.addLayout(self.verticalLayout_3)
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        Form.setWindowTitle(_translate("Form", "Array Configuration", None))
+        self.titleLabel.setText(_translate("Form", "Array Configuration Tool", None))
+        self.xLocLabel.setText(_translate("Form", "X-Location", None))
+        self.yLocLabel.setText(_translate("Form", "Y-Location", None))
+        self.addButton.setText(_translate("Form", "Add", None))
+        self.deleteButton.setText(_translate("Form", "Delete", None))
+        self.doneButton.setText(_translate("Form", "Done", None))
+        self.ntb._views.clear()
+        self.openParkFile()
+        if len(self.coordList)>0:
+            self.updateGraph()
+        
+    def openParkFile(self):
+        fname = './Run/parkconfig.dat'
+        if os.path.isfile('./Run/parkconfig.dat'):
+            with open(fname) as f:
+                allData = f.readlines()
+            nrCoord = int(allData[0])
+            self.coordList = []
+            for iC in range(nrCoord):
+                xLoc = float(allData[iC+1].split()[0])
+                yLoc = float(allData[iC+1].split()[1])                
+                self.coordList.append(np.array([xLoc,yLoc]))
+                item = QtGui.QListWidgetItem("X: {0:.2f}   Y: {1:.2f}".format(xLoc,yLoc))        
+                self.arrayList.addItem(item)    
+            
+    def saveParkFile(self):
+        fname = './Run/parkconfig.dat'
+        with open(fname,'w') as f:
+            f.write('{:d}\n'.format(len(self.coordList)))
+            for iL in range(len(self.coordList)):
+                f.write('{0:f}  {1:f}\n'.format(self.coordList[iL][0],self.coordList[iL][1]))
+        self.hide()
+        
+    def addToList(self):
+        xLoc = float(self.xLocEdit.text())
+        yLoc = float(self.yLocEdit.text())
+        loc = np.array([xLoc,yLoc])
+        self.coordList.append(loc)
+        item = QtGui.QListWidgetItem("X: {0:.2f}   Y: {1:.2f}".format(xLoc,yLoc))        
+        self.arrayList.addItem(item)
+        self.updateGraph()
+        
+    def remFromList(self):
+        iDel = self.arrayList.currentRow()
+        del self.coordList[iDel]
+        self.arrayList.takeItem(self.arrayList.row(self.arrayList.currentItem()))
+        self.updateGraph()        
+        
+    def updateGraph(self):
+        xpl = [a[0] for a in self.coordList]
+        ypl = [a[1] for a in self.coordList]
+        if len(self.coordList) > 1:
+            xSet = max([np.abs(min(xpl)),np.abs(max(xpl))])
+            ySet = max([np.abs(min(ypl)),np.abs(max(ypl))])
+            xLimit = [-1.1*xSet,1.1*xSet]
+            yLimit = [-1.1*ySet,1.1*ySet]
+        g = self.mpl
+        t = self.ntb        
+        t.update()
+        g.fig.delaxes(g.axes)
+        g.axes = g.fig.add_axes([0.20, 0.17, 0.75, 0.75])
+        g.axes.plot(xpl,ypl,'ko')
+        g.axes.set_xlabel("X [m]")
+        g.axes.set_ylabel("Y [m]")
+        if len(xpl) > 1:
+            g.axes.set_xlim(xLimit)
+            g.axes.set_ylim(yLimit)
+        g.draw()
+        g.axes.hold(False)
+        
 
 class CustomSpec(QtGui.QWidget):
     def __init__(self):
@@ -924,7 +1070,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         font.setFamily(_fromUtf8("Raleway"))
         self.nemohButton.setFont(font)
         self.nemohButton.setObjectName(_fromUtf8("nemohButton"))
-        self.formLayout_2.setWidget(24, QtGui.QFormLayout.FieldRole, self.nemohButton)
+        self.formLayout_2.setWidget(25, QtGui.QFormLayout.FieldRole, self.nemohButton)
         self.wavDirCheck = QtGui.QCheckBox(self.tabNemoh)
         self.wavDirCheck.setText(_fromUtf8(""))
         self.wavDirCheck.setObjectName(_fromUtf8("wavDirCheck"))
@@ -951,6 +1097,20 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.fsLengthY = QtGui.QLineEdit(self.tabNemoh)
         self.fsLengthY.setObjectName(_fromUtf8("fsLengthY"))
         self.formLayout_2.setWidget(23, QtGui.QFormLayout.FieldRole, self.fsLengthY)
+        self.parkLabel = QtGui.QLabel(self.tabNemoh)
+        self.parkLabel.setObjectName(_fromUtf8("parkLabel"))
+        self.formLayout_2.setWidget(24, QtGui.QFormLayout.LabelRole, self.parkLabel)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.parkCheck = QtGui.QCheckBox(self.tabNemoh)
+        self.parkCheck.setText(_fromUtf8(""))
+        self.parkCheck.setObjectName(_fromUtf8("parkCheck"))
+        self.horizontalLayout_2.addWidget(self.parkCheck)
+        self.parkConfig = QtGui.QPushButton(self.tabNemoh)
+        self.parkConfig.setObjectName(_fromUtf8("parkConfig"))
+        self.parkConfig.setEnabled(False)
+        self.horizontalLayout_2.addWidget(self.parkConfig)
+        self.formLayout_2.setLayout(24, QtGui.QFormLayout.FieldRole, self.horizontalLayout_2)        
         self.gridLayout_3.addLayout(self.formLayout_2, 0, 0, 1, 1)
         self.verticalLayout_3 = QtGui.QVBoxLayout()
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
@@ -1519,6 +1679,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.fsDeltaY.setPlaceholderText(_translate("MainWindow", "number of grid points in Y-direction", None))
         self.fsLengthX.setPlaceholderText(_translate("MainWindow", "length of grid in X-direction", None))
         self.fsLengthY.setPlaceholderText(_translate("MainWindow", "length of grid in Y-direction", None))
+        self.parkLabel.setText(_translate("openWEC", "WEC Array Simulation:", None))
+        self.parkCheck.clicked.connect(self.setParkButton)
+        self.parkConfig.setText(_translate("openWEC", "Configure...", None))
+        self.parkConfig.clicked.connect(self.runParkConfig)
         self.nemConsLabel.setText(_translate("MainWindow", "Information Console", None))
         self.nemVisualisation.setText(_translate("MainWindow", "Visualisation", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabNemoh), _translate("MainWindow", "Nemoh", None))
@@ -1619,6 +1783,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.actionManual.triggered.connect(self.manual)
         self.actionClose.setText(_translate("MainWindow", "Close", None))
         self.actionClose.triggered.connect(self.close)
+        self.cleanUp()
 
     def overwriteGraph(self,plotWindow=1):
         # Get the correct dof data        
@@ -2125,10 +2290,24 @@ class Ui_MainWindow(QtGui.QMainWindow):
             advOps['fsLengthY'] = float(self.fsLengthY.text())
         else:
             advOps['fsCheck'] = False
+        if self.parkCheck.isChecked():
+            advOps['parkCheck'] = True
+            if os.path.isfile('./Run/parkconfig.dat'):
+                advOps['parkFile'] = './Run/parkconfig.dat'
+                with open(advOps['parkFile']) as f:
+                    data = f.readlines()
+                if int(data[0])>0:
+                    None
+                else:
+                    print('WARNING: You must configure the array configuration before running the simulation')
+                    print('WARNING: Simulation will be run with single WEC!')
+                    advOps['parkCheck'] = False
+        else:
+            advOps['parkCheck'] = False
 
         # Write CAL file
-        ne.writeCalFile(rhoW,waterDepth,omega,zG,self.dof,aO=advOps)
-        self.genericThread = GenericThread(ne.runNemoh)
+        nbody = ne.writeCalFile(rhoW,waterDepth,omega,zG,self.dof,aO=advOps)
+        self.genericThread = GenericThread(ne.runNemoh,nbody=nbody)
         self.genericThread.start()
         print("Nemoh Simulation Running...")
         self.genericThread.finished.connect(partial(self.postNemoh,advOps,rhoW,waterDepth))
@@ -2820,6 +2999,23 @@ class Ui_MainWindow(QtGui.QMainWindow):
         print "Opening Custom Spectrum Tool..."
         self.w = CustomSpec()
         self.w.show()
+        
+    def runParkConfig(self):
+        print "Opening Array Configuration Tool..."
+        self.w = ParkConfig()
+        self.w.show()
+        
+    def setParkButton(self):
+        if self.parkCheck.isChecked():
+            self.fsCheck.setChecked(True)
+            self.parkConfig.setEnabled(True)
+            if os.path.isfile('./Run/parkconfig.dat'):
+                os.remove('./Run/parkconfig.dat')
+        else:
+            self.fsCheck.setChecked(False)
+            self.parkConfig.setEnabled(False)
+            if os.path.isfile('./Run/parkconfig.dat'):
+                os.remove('./Run/parkconfig.dat')
 
     def runMoorDynConfig(self):
         print "Opening MoorDyn Configuration Tool..."
@@ -2831,7 +3027,29 @@ class Ui_MainWindow(QtGui.QMainWindow):
             self.moorConfig.setEnabled(True)
         else:
             self.moorConfig.setEnabled(False)
-
+            
+    def cleanUp(self):
+        os.chdir('./Calculation')
+        fileList = glob.glob('./axisym*.dat')
+        for fil in fileList:
+            os.remove(fil)
+        os.chdir('./mesh')
+        fileList = os.listdir('./')
+        for fil in fileList:
+            os.remove(fil)
+        os.chdir('..')
+        os.chdir('./results')
+        fileList = os.listdir('./')
+        for fil in fileList:
+            os.remove(fil)
+        os.chdir('..')
+        os.chdir('..')
+        os.chdir('Run/Nemoh')
+        fileList = os.listdir('./')
+        for fil in fileList:
+            os.remove(fil)
+        os.chdir('../..')
+        
 def openCustom():
     ex2 = Ui_MainWindow()
     return ex2    
