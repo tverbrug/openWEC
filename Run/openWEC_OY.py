@@ -1135,7 +1135,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         mt.writeMesh(mesh,'./Calculation/mesh/axisym')
         print("Meshing...")
-        self.genericThread = GenericThread(ne.createMeshOpt,hosb-waterDepth,nPanels,int(0),rho=float(self.rhoBox.text()))
+        cG = [0.0,0.0,hosb-waterDepth]
+        self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels,int(0),rho=float(self.rhoBox.text()))
         self.genericThread.start()
         self.genericThread.finished.connect(self.visualizeMesh)
         

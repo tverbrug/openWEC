@@ -76,13 +76,13 @@ def createMeshFull(n,X):
     # close mesh file
     fid.close()             
 
-def createMeshOpt(zG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
+def createMeshOpt(cG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
     if nbody==1:
         fid = open('./Calculation/Mesh.cal','w')
         fid.write('axisym\n')
         fid.write('{:d}\n'.format(nsym))
         fid.write('0. 0.\n')
-        value = '0. 0. {0:f} \n'.format(zG)
+        value = '{0:f} {1:f} {2:f} \n'.format(cG[0],cG[1],cG[2])
         fid.write(value)
         fid.write(str(nPanels) + '\n')
         fid.write('2\n0.\n1.\n')
@@ -101,7 +101,7 @@ def createMeshOpt(zG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
             fid.write('axisym{:d}\n'.format(iB+1))
             fid.write('{:d}\n'.format(nsym))
             fid.write('0. 0.\n')
-            value = '{0:f} 0. {1:f} \n'.format(xG[iB],zG)
+            value = '{0:f} {1:f} {2:f} \n'.format(cG[0],cG[1],cG[2])
             fid.write(value)
             fid.write(str(nPanels) + '\n')
             fid.write('2\n0.\n1.\n')

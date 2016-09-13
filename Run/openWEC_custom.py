@@ -1852,7 +1852,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         elif test==3:
             xVar = self.freq
             yVar = self.RAO
-            xlabel = '$Frequency [s]$'
+            xlabel = '$Frequency [Hz]$'
             ylabel = '$RAO$'
         elif test==4:
             xVar = self.time
@@ -2186,11 +2186,15 @@ class Ui_MainWindow(QtGui.QMainWindow):
         sys.path.insert(0, './Run')
         import meshTypes as mt
         
+        zG = float(self.zGBox.text())
+        cG = [0.0,0.0,zG]
+        
         if self.meshMethod.currentIndex()==0:
-            zG = float(self.zGBox.text())
             nPanels = int(self.nPanelBox.text())
             if(len(self.meshObj)>1):
                 startMesh = self.meshObj[0]
+                cG[0] = startMesh.xC
+                cG[1] = startMesh.yC
                 for iM in range(len(self.meshObj)-1):
                     comMesh = mt.Mesh()
                     comMesh.combineMesh(startMesh,self.meshObj[iM+1])
@@ -2198,25 +2202,25 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 comMesh.delHorPan()
                 mt.writeMesh(comMesh,'./Calculation/mesh/axisym')
                 #ne.createMeshOpt(zG,nPanels,int(0),rho=float(self.rhoBox.text()))
-                self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+                self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels,int(0),rho=float(self.rhoBox.text()))
                 self.genericThread.start()
             elif(len(self.meshObj)==1):
+                cG[0] = self.meshObj[0].xC
+                cG[1] = self.meshObj[0].yC
                 mt.writeMesh(self.meshObj[0],'./Calculation/mesh/axisym')
-                self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+                self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels,int(0),rho=float(self.rhoBox.text()))
                 self.genericThread.start()
             else:
                 print('WARNING: Cannot create mesh when no mesh parts are created!')
 
         elif self.meshMethod.currentIndex()==2:
-            zG = float(self.zGBox.text())
             nPanels = self.convertMesh()
-            self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+            self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels,int(0),rho=float(self.rhoBox.text()))
             self.genericThread.start()
 
         elif self.meshMethod.currentIndex()==1:
-            zG = float(self.zGBox.text())
             nPanels = self.convertMesh()
-            self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(0),rho=float(self.rhoBox.text()))
+            self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels,int(0),rho=float(self.rhoBox.text()))
             self.genericThread.start()
            
         print('Meshing....')

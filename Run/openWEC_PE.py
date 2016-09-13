@@ -1121,6 +1121,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         height = float(self.heightBox.text())
         nPanels = int(self.nPanelBox.text())
         zG = -height/4.0
+        cG = [0.0,0.0,zG]
+
         
         width = float(self.widthBox.text())        
         spacing = float(self.spacingBox.text())       
@@ -1131,7 +1133,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         mt.writeMesh(box1,'./Calculation/mesh/axisym1')
         mt.writeMesh(box2,'./Calculation/mesh/axisym2')
         print("Meshing...")
-        self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels/2,int(0),rho=float(self.rhoBox.text()),nbody=2,xG=[-(length+spacing)/2.0,(length+spacing)/2.0])
+        self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels/2,int(0),rho=float(self.rhoBox.text()),nbody=2,xG=[-(length+spacing)/2.0,(length+spacing)/2.0])
         self.genericThread.start()
         self.genericThread.finished.connect(self.visualizeMesh)
 

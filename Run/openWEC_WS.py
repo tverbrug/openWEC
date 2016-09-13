@@ -1096,6 +1096,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         diam = float(self.diameterBox.text())
         zG = -1.0*diam/2.0
+        cG = [0.0,0.0,zG]
         nPanels = int(self.nPanelBox.text())
         dz = int(np.sqrt(nPanels))
         dtheta = int(nPanels/dz)
@@ -1112,7 +1113,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         ne.createMeshAxi(r,z,n,dtheta)
         print("Meshing...")
-        self.genericThread = GenericThread(ne.createMeshOpt,zG,nPanels,int(1),rho=float(self.rhoBox.text()))
+        self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels,int(1),rho=float(self.rhoBox.text()))
         self.genericThread.start()
         self.genericThread.finished.connect(self.visualizeMesh)
 
