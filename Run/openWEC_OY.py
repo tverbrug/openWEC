@@ -1175,6 +1175,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         # Advanced Options
         advOps = {}
+        advOps['parkCheck'] = False
         if self.wavDirCheck.isChecked():
             advOps['dirCheck'] =  True
             advOps['dirStart'] = float(self.wavDirStart.text())
