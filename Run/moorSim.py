@@ -1,4 +1,8 @@
 import numpy as np
+import os
+
+wdir = os.path.join(os.path.expanduser("~"),'openWEC')
+
 
 def simLinesInit():
     import ctypes
@@ -102,7 +106,8 @@ def openLines(fileName):
     return mdLines
     
 def changeDepth(strDepth):
-    with open('./Mooring/lines.txt','r') as f:
+    moorFile = os.path.join(wdir,'Mooring','lines.txt')
+    with open(moorFile,'r') as f:
         data = f.readlines()
         
     # Find water depth line
@@ -118,7 +123,7 @@ def changeDepth(strDepth):
     except:
         print("WARNING: no water depth specified in Mesh tab, default value is used for Mooring Simulation")
         
-    with open('./Mooring/lines.txt','w') as f:
+    with open(moorFile,'w') as f:
         f.writelines(data)
             
     

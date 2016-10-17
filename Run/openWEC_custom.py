@@ -157,6 +157,7 @@ class ParkConfig(QtGui.QWidget):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
+        self.wDir = os.path.join(os.path.expanduser('~'),'openWEC')
         Form.setWindowTitle(_translate("Form", "Array Configuration", None))
         self.titleLabel.setText(_translate("Form", "Array Configuration Tool", None))
         self.xLocLabel.setText(_translate("Form", "X-Location", None))
@@ -170,8 +171,8 @@ class ParkConfig(QtGui.QWidget):
             self.updateGraph()
         
     def openParkFile(self):
-        fname = './Run/parkconfig.dat'
-        if os.path.isfile('./Run/parkconfig.dat'):
+        fname = os.path.join(self.wDir,'Other','parkconfig.dat')
+        if os.path.isfile(fname):
             with open(fname) as f:
                 allData = f.readlines()
             nrCoord = int(allData[0])
@@ -184,7 +185,7 @@ class ParkConfig(QtGui.QWidget):
                 self.arrayList.addItem(item)    
             
     def saveParkFile(self):
-        fname = './Run/parkconfig.dat'
+        fname = os.path.join(self.wDir,'Other','parkconfig.dat')
         with open(fname,'w') as f:
             f.write('{:d}\n'.format(len(self.coordList)))
             for iL in range(len(self.coordList)):
@@ -251,13 +252,14 @@ class CustomSpec(QtGui.QWidget):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
+        self.wDir = os.path.join(os.path.expanduser("~"),'openWEC')
         Form.setWindowTitle(_translate("Form", "Form", None))
         self.loadCS.setText(_translate("Form", "Load spectrum", None))
         self.loadCS.clicked.connect(self.loadSpec)
         self.ntb._views.clear()
     
     def loadSpec(self):
-        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open Spectrum','./',"ASCII Files (*.txt *.csv *.dat)")
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open Spectrum',os.path.join(self.wDir,'Other'),"ASCII Files (*.txt *.csv *.dat)")
         spec = np.loadtxt(str(fname))
         
         g = self.mpl
@@ -272,7 +274,7 @@ class CustomSpec(QtGui.QWidget):
         g.axes.hold(False)
         
         # Copy Result files to Simulation directory
-        sh.copy(fname,"./Run/spec.dat")
+        sh.copy(fname,os.path.join(self.wDir,'Other','spec.dat'))
         
     def close(self):
         self.hide()
@@ -447,6 +449,7 @@ class MoorDynPopup(QtGui.QWidget):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
+        self.wDir = os.path.join(os.path.expanduser('~'),'openWEC')
         Form.setWindowTitle(_translate("Form", "MoorDyn Configuration", None))
         self.label.setText(_translate("Form", "Line Type", None))
         self.pushButton_5.setText(_translate("Form", "Add Line Type", None))
@@ -556,7 +559,7 @@ class MoorDynPopup(QtGui.QWidget):
         sys.path.insert(0, './Run')
         import moorSim as ms        
         fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', 
-                        './Mooring','*.txt')
+                        os.path.join(self.wDir,'Mooring'),'*.txt')
         mdLines = ms.openLines(fname)
         # Line types
         self.LineTypeTable.setRowCount(mdLines['nrLineTypes'])
@@ -637,7 +640,8 @@ class MoorDynPopup(QtGui.QWidget):
         linesFile.append('--------------------- need this line ------------------\n')
         
         # Write file
-        with open('Mooring/lines.txt','w') as f:
+        fileName = os.path.join(self.wDir,'Mooring','lines.txt')
+        with open(fileName,'w') as f:
             f.writelines(linesFile)
         print('Lines file succesfully written!\n')
         
@@ -1585,6 +1589,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         self.nrObj = 0
         self.meshObj = []
+        self.wDir = os.path.join(os.path.expanduser("~"),'openWEC')
+
         # Set GUI
         # Mesh Tab
         MainWindow.setWindowTitle(_translate("openWEC", "openWEC", None))
@@ -1829,7 +1835,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 Fpto = self.Fpto
         elif test/4 == 2:
             pT = "Grid"
-            if(os.path.isfile('./Run/Nemoh/freesurface.    1.dat')):
+            fsFile = os.path.join(self.wDir,'Nemoh','freesurface.    1.dat')
+            if(os.path.isfile(fsFile)):
                 None
             else:
                 print("Warning! No free surface was calculated with Nemoh! Plotting not possible!")
@@ -2191,6 +2198,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         if self.meshMethod.currentIndex()==0:
             nPanels = int(self.nPanelBox.text())
+            meshFile = os.path.join(self.wDir,'Calculation','mesh','axisym')
             if(len(self.meshObj)>1):
                 startMesh = self.meshObj[0]
                 cG[0] = startMesh.xC
@@ -2200,14 +2208,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
                     comMesh.combineMesh(startMesh,self.meshObj[iM+1])
                     startMesh = comMesh
                 comMesh.delHorPan()
-                mt.writeMesh(comMesh,'./Calculation/mesh/axisym')
+                mt.writeMesh(comMesh,meshFile)
                 #ne.createMeshOpt(zG,nPanels,int(0),rho=float(self.rhoBox.text()))
                 self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels,int(0),rho=float(self.rhoBox.text()))
                 self.genericThread.start()
             elif(len(self.meshObj)==1):
                 cG[0] = self.meshObj[0].xC
                 cG[1] = self.meshObj[0].yC
-                mt.writeMesh(self.meshObj[0],'./Calculation/mesh/axisym')
+                mt.writeMesh(self.meshObj[0],meshFile)
                 self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels,int(0),rho=float(self.rhoBox.text()))
                 self.genericThread.start()
             else:
@@ -2237,7 +2245,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def runNemohCode(self):
         # Delete previous results
-        folder = './Calculation/results'
+        folder = os.path.join(self.wDir,'Calculation','results')
         for fil in os.listdir(folder):
             filPath = os.path.join(folder,fil)
             if os.path.isfile(filPath):
@@ -2296,8 +2304,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
             advOps['fsCheck'] = False
         if self.parkCheck.isChecked():
             advOps['parkCheck'] = True
-            if os.path.isfile('./Run/parkconfig.dat'):
-                advOps['parkFile'] = './Run/parkconfig.dat'
+            parkFile = os.path.join(self.wDir,'Other','parkconfig.dat')
+            if os.path.isfile(parkFile):
+                advOps['parkFile'] = parkFile
                 with open(advOps['parkFile']) as f:
                     data = f.readlines()
                 if int(data[0])>0:
@@ -2318,25 +2327,25 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def postNemoh(self,advOps,rhoW,depth):
         # Delete content of destination folder
-        folder = './Run/Nemoh'
+        folder = os.path.join(self.wDir,'Nemoh')
         for fil in os.listdir(folder):
             filPath = os.path.join(folder,fil)
             if os.path.isfile(filPath):
                 os.unlink(filPath)
         
         # Copy Result files to Simulation directory
-        pathName = './Calculation/results'
+        pathName = os.path.join(self.wDir,'Calculation','results')
         srcFiles = os.listdir(pathName)
         for iFile in srcFiles:
             fullFile = os.path.join(pathName,iFile)
             if(os.path.isfile(fullFile)):
-                sh.copy(fullFile,"./Run/Nemoh")
-        pathName = './Calculation/mesh'
+                sh.copy(fullFile,folder)
+        pathName = os.path.join(self.wDir,'Calculation','mesh')
         srcFiles = os.listdir(pathName)
         for iFile in srcFiles:
             fullFile = os.path.join(pathName,iFile)
             if(os.path.isfile(fullFile)):
-                sh.copy(fullFile,"./Run/Nemoh")
+                sh.copy(fullFile,folder)
 
         # Display results on matplotlib widgets
         sys.path.insert(0, './Run')
@@ -2368,7 +2377,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def openDialog(self):
         fileName = QtGui.QFileDialog.getOpenFileName(self,
-        "Open Nemoh File","./Calculation","Nemoh File (*.cal)")
+        "Open Nemoh File",os.path.join(self.wDir,'Calculation'),"Nemoh File (*.cal)")
         fileName = str(fileName)
         # Copy result files
         pathName = os.path.dirname(fileName)
@@ -2377,7 +2386,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         for iFile in srcFiles:
             fullFile = os.path.join(pathName,iFile)
             if(os.path.isfile(fullFile)):
-                sh.copy(fullFile,"./Run/Nemoh")
+                sh.copy(fullFile,os.path.join(self.wDir,'Nemoh'))
         # Copy mesh files
         pathName = os.path.dirname(fileName)
         pathName = os.path.join(pathName,'mesh')
@@ -2385,12 +2394,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
         for iFile in srcFiles:
             fullFile = os.path.join(pathName,iFile)
             if(os.path.isfile(fullFile)):
-                sh.copy(fullFile,"./Run/Nemoh")
+                sh.copy(fullFile,os.path.join(self.wDir,'Nemoh'))
 
     def convertMesh(self):
         if self.meshMethod.currentIndex()==2:
             fileName = QtGui.QFileDialog.getOpenFileName(self,
-            "Open STL Mesh","./","Nemoh File (*.stl)")
+            "Open STL Mesh",self.wDir,"Nemoh File (*.stl)")
             fileName = str(fileName)
             print(fileName)
             
@@ -2402,11 +2411,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
         elif self.meshMethod.currentIndex()==1:
             nrPanels = int(self.nPanelBox.text())
             fileName = QtGui.QFileDialog.getOpenFileName(self,
-            "Open Nemoh Mesh","./","Nemoh Mesh File (*)")
+            "Open Nemoh Mesh",self.wDir,"Nemoh Mesh File (*)")
             fileName = str(fileName)
             print(fileName)
             # copy to mesh directory
-            sh.copyfile(fileName,"./Calculation/mesh/axisym")
+            sh.copy(fileName,os.path.join(self.wDir,'Calculation','mesh','axisym'))
         return nrPanels
         
     def runThread(self,pf=[],f=[],*args,**kwargs):
@@ -2503,11 +2512,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 Ma,Bhyd,omega = pn.getAB(dof)
                 MaS,BhydS = pn.irregAB(Ma,Bhyd,omega,M,c,dof,specSS)
                 MaS[2,2] = Mainf
-                np.savetxt('./Output/M.dat',M)
-                np.savetxt('./Output/c.dat',c)
-                np.savetxt('./Output/MaS.dat',MaS)
-                np.savetxt('./Output/BhydS.dat',BhydS)
-                np.savetxt('./Output/Fex.dat',Fex)
+                np.savetxt(os.path.join(self.wDir,'Output','M.dat'),M)
+                np.savetxt(os.path.join(self.wDir,'Output','c.dat'),c)
+                np.savetxt(os.path.join(self.wDir,'Output','MaS.dat'),MaS)
+                np.savetxt(os.path.join(self.wDir,'Output','BhydS.dat'),BhydS)
+                np.savetxt(os.path.join(self.wDir,'Output','Fex.dat'),Fex)
 
         #---------------------------------------------------------------------------
         # MODEL SIMULATION
@@ -2570,7 +2579,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
         # Save Results
         saveName = QtGui.QFileDialog.getSaveFileName(self,
-        "Save Simulation Results","./Output","Text File (*.txt)")
+        "Save Simulation Results",os.path.join(self.wDir,'Output'),"Text File (*.txt)")
         wc.saveResults(saveName,self.time,self.posZ,self.velZ,self.Fpto,li=self.indList)        
         
         # Calculate Produced Power
@@ -2676,7 +2685,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         return V,F
 
     def write_MAR(self,V, F, nv, nf):
-        ofile = open('./Calculation/mesh/axisym', 'w')
+        ofile = open(os.path.join(self.wDir,'Calculation','mesh','axisym'), 'w')
 
         ofile.write('{0:d}\n{1:d}\n'.format(nv, nf))
 
@@ -2878,7 +2887,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
     def saveFile(self):
         fname = QtGui.QFileDialog.getSaveFileName(self, 'Save file', 
-                        './','*.cu')
+                        self.wDir,'*.cu')
                 
         with open(fname,'w') as f:
             # Write Mesh Tab properties
@@ -3010,16 +3019,17 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.w.show()
         
     def setParkButton(self):
+        parkFile = os.path.join(self.wDir,'Other','parkconfig.dat')
         if self.parkCheck.isChecked():
             self.fsCheck.setChecked(True)
             self.parkConfig.setEnabled(True)
-            if os.path.isfile('./Run/parkconfig.dat'):
-                os.remove('./Run/parkconfig.dat')
+            if os.path.isfile(parkFile):
+                os.remove(parkFile)
         else:
             self.fsCheck.setChecked(False)
             self.parkConfig.setEnabled(False)
-            if os.path.isfile('./Run/parkconfig.dat'):
-                os.remove('./Run/parkconfig.dat')
+            if os.path.isfile(parkFile):
+                os.remove(parkFile)
 
     def runMoorDynConfig(self):
         print "Opening MoorDyn Configuration Tool..."
@@ -3033,7 +3043,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
             self.moorConfig.setEnabled(False)
             
     def cleanUp(self):
-        os.chdir('./Calculation')
+        curDir = os.getcwd()
+        os.chdir(os.path.join(self.wDir,'Calculation'))
         fileList = glob.glob('./axisym*.dat')
         for fil in fileList:
             os.remove(fil)
@@ -3048,11 +3059,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
             os.remove(fil)
         os.chdir('..')
         os.chdir('..')
-        os.chdir('Run/Nemoh')
+        os.chdir('Nemoh')
         fileList = os.listdir('./')
         for fil in fileList:
             os.remove(fil)
-        os.chdir('../..')
+        os.chdir(curDir)
         
 def openCustom():
     ex2 = Ui_MainWindow()

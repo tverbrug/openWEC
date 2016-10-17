@@ -9,6 +9,7 @@ This is a collection of functions, used in the WEC simulation tool
 
 import numpy as np
 
+
 #---------------------------------------------------------------------------
 # SPECTRAL VALUES
 #---------------------------------------------------------------------------

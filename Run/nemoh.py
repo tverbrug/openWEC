@@ -13,6 +13,8 @@ import shutil as sh
 import platform as pt
 import numpy as np
 
+wdir = os.path.join(os.path.expanduser("~"),'openWEC')
+
 # Used Functions
 
 def createMeshAxi(r,z,n,dtheta):
@@ -20,9 +22,10 @@ def createMeshAxi(r,z,n,dtheta):
     thetaR = range(0,dtheta)
     theta = [xx*math.pi/(dtheta-1) for xx in thetaR]
     # write mesh file
-    if not os.path.exists('./Calculation/mesh'):
-        os.makedirs('./Calculation/mesh')    
-    fid = open('./Calculation/mesh/axisym','w')
+    wpath = os.path.join(wdir,'Calculation','mesh')
+    if not os.path.exists(wpath):
+        os.makedirs(wpath)    
+    fid = open(os.path.join(wpath,'axisym'),'w')
     values = str(n*dtheta) + '\n'
     fid.write(values)
     values = str((n-1)*(dtheta-1)) + '\n'
@@ -54,9 +57,10 @@ def createMeshAxi(r,z,n,dtheta):
 def createMeshFull(n,X):
     nx = 0
     # write mesh file
-    if not os.path.exists('./Calculation/mesh'):
-        os.makedirs('./Calculation/mesh')    
-    fid = open('./Calculation/mesh/axisym','w')
+    wpath = os.path.join(wdir,'Calculation','mesh')
+    if not os.path.exists(wpath):
+        os.makedirs(wpath)    
+    fid = open(os.path.join(wpath,'axisym'),'w')
     values = str(n*4) + '\n'
     fid.write(values)
     values = str(n) + '\n'
@@ -77,8 +81,10 @@ def createMeshFull(n,X):
     fid.close()             
 
 def createMeshOpt(cG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
+    curPath = os.getcwd()
+    calPath = os.path.join(wdir,'Calculation','Mesh.cal')
     if nbody==1:
-        fid = open('./Calculation/Mesh.cal','w')
+        fid = open(calPath,'w')
         fid.write('axisym\n')
         fid.write('{:d}\n'.format(nsym))
         fid.write('0. 0.\n')
@@ -89,15 +95,15 @@ def createMeshOpt(cG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
         fid.write('{0:f}\n'.format(rho))
         fid.write('{0:f}\n'.format(9.81))
         fid.close()
-        os.chdir('Calculation')
+        os.chdir(os.path.join(wdir,'Calculation'))
         if pt.system()=='Linux':
             os.system('./meshL')
         else:
             os.system('Mesh.exe')
-        os.chdir('../')
+        os.chdir(curPath)
     else:
         for iB in range(nbody):
-            fid = open('./Calculation/Mesh.cal','w')
+            fid = open(calPath,'w')
             fid.write('axisym{:d}\n'.format(iB+1))
             fid.write('{:d}\n'.format(nsym))
             fid.write('0. 0.\n')
@@ -108,27 +114,29 @@ def createMeshOpt(cG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
             fid.write('{0:f}\n'.format(rho))
             fid.write('{0:f}\n'.format(9.81))
             fid.close()
-            os.chdir('Calculation')
+            os.chdir(os.path.join(wdir,'Calculation'))
             if pt.system()=='Linux':
                 os.system('./meshL')
             else:
                 os.system('Mesh.exe')
-            os.chdir('../')
+            os.chdir(curPath)
 
 def openParkFile(fname):
-        if os.path.isfile('./Run/parkconfig.dat'):
-            with open(fname) as f:
-                allData = f.readlines()
-            nrCoord = int(allData[0])
-            coordList = []
-            for iC in range(nrCoord):
-                xLoc = float(allData[iC+1].split()[0])
-                yLoc = float(allData[iC+1].split()[1])                
-                coordList.append(np.array([xLoc,yLoc]))
-        return coordList
+    parkPath = os.path.join(wdir,'Other','parkconfig.dat')
+    if os.path.isfile(parkPath):
+        with open(fname) as f:
+            allData = f.readlines()
+        nrCoord = int(allData[0])
+        coordList = []
+        for iC in range(nrCoord):
+            xLoc = float(allData[iC+1].split()[0])
+            yLoc = float(allData[iC+1].split()[1])                
+            coordList.append(np.array([xLoc,yLoc]))
+    return coordList
         
 def makeArray(coordList):
-    baseMesh = np.loadtxt('./Calculation/mesh/axisym.dat',skiprows=1)
+    meshFile = os.path.join(wdir,'Calculation','mesh','axisym.dat')
+    baseMesh = np.loadtxt(meshFile,skiprows=1)
     nPoint = int(np.max(baseMesh[:,0]))
     nPanel = len(baseMesh[nPoint+1::,0])-1
     panels = baseMesh[nPoint+1:-1,:].astype(int)
@@ -137,7 +145,8 @@ def makeArray(coordList):
     for iB in range(len(coordList)):
         xTr = coordList[iB][0]
         yTr = coordList[iB][1]
-        with open('./Calculation/mesh/axisym{:d}.dat'.format(iB+1),'w') as f:
+        meshFile = os.path.join(wdir,'Calculation','mesh','axisym{:d}.dat'.format(iB+1))
+        with open(meshFile,'w') as f:
             f.write('                    2          0\n')
             for iP in range(nPoint):
                 f.write('             {0:d}             {1:f}             {2:f}             {3:f}\n'.format(iP+1,xBase[iP]+xTr,yBase[iP]+yTr,baseMesh[iP,3]))
@@ -145,13 +154,14 @@ def makeArray(coordList):
             for iP in range(nPanel):
                 f.write('               {0:d}               {1:d}               {2:d}               {3:d}\n'.format(panels[iP,0],panels[iP,1],panels[iP,2],panels[iP,3]))
             f.write('               {0:d}               {1:d}               {2:d}               {3:d}\n'.format(0,0,0,0))
-        with open('./Calculation/mesh/axisym{:d}_info.dat'.format(iB+1),'w') as f:
+        infoFile = os.path.join(wdir,'Calculation','mesh','axisym{:d}_info.dat'.format(iB+1))
+        with open(infoFile,'w') as f:
             f.write('    {0:d}     {1:d} Number of points and number of panels'.format(nPoint,nPanel))
 
 def writeCalFile(rhoW,depW,omega,zG,dof,aO={},nbody=1,xG=[0.0]):
     # In case of array simulation, do stuff
     if aO['parkCheck']:
-        fname = './Run/parkconfig.dat'
+        fname = os.path.join(wdir,'Other','parkconfig.dat')
         coordList = openParkFile(fname)
         nbody = len(coordList)
         makeArray(coordList)
@@ -160,9 +170,11 @@ def writeCalFile(rhoW,depW,omega,zG,dof,aO={},nbody=1,xG=[0.0]):
     nrPanel = [0]*nbody
     for iB in range(nbody):
         if nbody == 1:
-            f1 = open('./Calculation/mesh/axisym_info.dat','r')
+            infoName = os.path.join(wdir,'Calculation','mesh','axisym_info.dat')
+            f1 = open(infoName,'r')
         else:
-            f1 = open('./Calculation/mesh/axisym{:d}_info.dat'.format(iB+1),'r')
+            infoName = os.path.join(wdir,'Calculation','mesh','axisym{:d}_info.dat'.format(iB+1))
+            f1 = open(infoName,'r')
         lineInfo = f1.readline()
         lineInfo = lineInfo.split()
         nrNode[iB] = int(lineInfo[0])
@@ -175,7 +187,8 @@ def writeCalFile(rhoW,depW,omega,zG,dof,aO={},nbody=1,xG=[0.0]):
     fsCheck = aO['fsCheck']
 
     # Create the Nemoh calibration file
-    fid = open('./Calculation/Nemoh.cal','w')
+    calFile = os.path.join(wdir,'Calculation','Nemoh.cal')
+    fid = open(calFile,'w')
     fid.write('--- Environment ---\n')
     fid.write(str(rhoW) + '				! RHO 			! KG/M**3 	! Fluid specific volume\n')
     fid.write('9.81				! G			! M/S**2	! Gravity\n')
@@ -245,7 +258,9 @@ def writeCalFile(rhoW,depW,omega,zG,dof,aO={},nbody=1,xG=[0.0]):
     return nbody
     
 def runNemoh(nbody=1):
-    os.chdir('./Calculation')
+    runDir = os.path.join(wdir,'Calculation')
+    curDir = os.getcwd()
+    os.chdir(runDir)
     if nbody == 1:
         sh.copyfile('./mesh/axisym.dat','axisym.dat')
     else:
@@ -259,12 +274,13 @@ def runNemoh(nbody=1):
         os.system('preProcessor.exe')
         os.system('Solver.exe')
         os.system('postProcessor.exe')
-    os.chdir('../')
+    os.chdir(curDir)
 
 
 def postNemoh(dof):
     # Open IRF file
-    with open('./Calculation/results/IRF.tec','r') as f:
+    irfFile = os.path.join(wdir,'Calculation','results','IRF.tec')
+    with open(irfFile,'r') as f:
         irfRaw = f.readlines()
         if dof=='heave':
             strPat = 'DoF    1'

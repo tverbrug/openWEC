@@ -8,7 +8,10 @@
 
 from PyQt4 import QtCore, QtGui
 from matplotlib.backends import qt_compat
+from os.path import expanduser
+import os, stat, time
 import sys
+import shutil
 sys.path.insert(0, './Run')
 
 
@@ -146,9 +149,87 @@ class Ui_introScreen(QtGui.QMainWindow):
         self.pelamisButton.clicked.connect(self.openPE)
         self.customButton.setText(_translate("introScreen", "Custom Simulator", None))
         self.customButton.clicked.connect(self.openCU)
-
+        
+    def makeProjectDir(self):
+        # Empty project directory
+        home = expanduser("~")
+        dirname = os.path.join(home,'openWEC')
+        calcname = os.path.join(dirname,'Calculation')
+        meshname = os.path.join(calcname,'mesh')
+        resname = os.path.join(calcname,'results')
+        nemohname = os.path.join(dirname,'Nemoh')
+        mooringname = os.path.join(dirname,'Mooring')
+        outputname = os.path.join(dirname,'Output')
+        othername = os.path.join(dirname,'Other')
+        if(os.path.isdir(dirname)):
+            if(os.path.isdir(calcname)):
+                if(os.path.isdir(meshname)):
+                    None
+                else:
+                    os.mkdir(meshname)
+                if(os.path.isdir(resname)):
+                    None
+                else:
+                    os.mkdir(resname)
+            else:
+                os.mkdir(calcname)
+            if(os.path.isdir(nemohname)):
+                None
+            else:
+                os.mkdir(nemohname)
+            if(os.path.isdir(mooringname)):
+                None
+            else:
+                os.mkdir(mooringname)
+            if(os.path.isdir(outputname)):
+                None
+            else:
+                os.mkdir(outputname)
+            if(os.path.isdir(othername)):
+                None
+            else:
+                os.mkdir(othername)
+#                try:
+#                    shutil.rmtree(dirname)
+#                except:
+#                    time.sleep(0.1)
+#                    shutil.rmtree(dirname)
+#            time.sleep(0.1)
+        else:
+            os.mkdir(dirname)
+            os.mkdir(calcname)
+            os.mkdir(nemohname)
+            os.mkdir(meshname)
+            os.mkdir(resname)
+            os.mkdir(mooringname)
+            os.mkdir(outputname)
+            os.mkdir(othername)
+        # Copy necessary files
+        shutil.copy('./Calculation/Solver.exe',calcname)
+        shutil.copy('./Calculation/input.txt',calcname)
+        shutil.copy('./Calculation/preProcessor.exe',calcname)
+        shutil.copy('./Calculation/Mesh.cal',calcname)
+        shutil.copy('./Calculation/Nemoh.cal',calcname)
+        shutil.copy('./Calculation/postProc',calcname)
+        shutil.copy('./Calculation/meshL',calcname)
+        shutil.copy('./Calculation/solver',calcname)
+        shutil.copy('./Calculation/postProcessor.exe',calcname)
+        shutil.copy('./Calculation/ID.dat',calcname)
+        shutil.copy('./Calculation/Mesh.exe',calcname)
+        shutil.copy('./Calculation/preProc',calcname)
+        shutil.copy('./Run/spec_test.dat',othername)
+        shutil.copy('./Mooring/lines_template.txt',mooringname)
+        shutil.copy('./Mooring/lines.txt',mooringname)
+        # Give permissions to executables
+        os.chmod(os.path.join(calcname,'meshL'),stat.S_IRWXU)
+        os.chmod(os.path.join(calcname,'preProc'),stat.S_IRWXU)
+        os.chmod(os.path.join(calcname,'solver'),stat.S_IRWXU)
+        os.chmod(os.path.join(calcname,'postProc'),stat.S_IRWXU)
+        
+      
     def openWS(self):
         import openWEC_WS as opc
+        self.makeProjectDir()
         oldwindow = self
         window = opc.openWS()
         self = window
@@ -157,6 +238,7 @@ class Ui_introScreen(QtGui.QMainWindow):
         
     def openOY(self):
         import openWEC_OY as opc
+        self.makeProjectDir()
         oldwindow = self
         window = opc.openOY()
         self = window
@@ -165,6 +247,7 @@ class Ui_introScreen(QtGui.QMainWindow):
         
     def openPE(self):
         import openWEC_PE as opc
+        self.makeProjectDir()
         oldwindow = self
         window = opc.openPE()
         self = window
@@ -173,6 +256,7 @@ class Ui_introScreen(QtGui.QMainWindow):
 
     def openCU(self):
         import openWEC_custom as opc
+        self.makeProjectDir()
         oldwindow = self
         window = opc.openCustom()
         self = window

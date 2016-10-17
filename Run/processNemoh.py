@@ -12,6 +12,9 @@ import numpy as np
 import nemoh as ne
 import os
 
+wdir = os.path.join(os.path.expanduser("~"),'openWEC')
+
+
 def calcAlphaBeta(nSel,rho,dof):
 
 #---------------------------------------------------------------------------
@@ -22,7 +25,7 @@ def calcAlphaBeta(nSel,rho,dof):
     #rho = 1025.0
     #nSel = 10
     #dof = 'all'
-    pathFile = './Run/Nemoh/IRF.tec'
+    pathFile = os.path.join(wdir,'Nemoh','IRF.tec')
     with open(pathFile,'r') as f:
         irfRaw = f.readlines()
     if sum(dof) < 2:
@@ -159,7 +162,7 @@ def calcAlphaBeta(nSel,rho,dof):
     return (alphaSel,betaSel,error2E,aInf)
     
 def calcM(rho=1025.0,dof=[0,0,1,0,0,0]):
-    pathFile = './Run/Nemoh/KH.dat'
+    pathFile = os.path.join(wdir,'Nemoh','KH.dat')
     dof = np.array(dof)
     with open(pathFile,'r') as f:
         khRaw = f.readlines()
@@ -173,7 +176,7 @@ def calcM(rho=1025.0,dof=[0,0,1,0,0,0]):
         c = np.dot(KH,dof)[dof.index(1)]
     
     M = np.diag([1.,1.,1.,1.,1.,1.])
-    pathFile = './Run/Nemoh/Hydrostatics.dat'
+    pathFile = os.path.join(wdir,'Nemoh','Hydrostatics.dat')
     with open(pathFile,'r') as f:
         mRaw = f.readlines()
     mass = rho*float(mRaw[3].split()[2])
@@ -185,7 +188,7 @@ def calcM(rho=1025.0,dof=[0,0,1,0,0,0]):
     M[3,1] = -mass*zG
     
     I = np.zeros((3,3))    
-    pathFile = './Run/Nemoh/Inertia_hull.dat'
+    pathFile = os.path.join(wdir,'Nemoh','Inertia_hull.dat')
     with open(pathFile,'r') as f:
         mRaw = f.readlines()
     for iL in range(len(mRaw)):
@@ -198,7 +201,7 @@ def calcM(rho=1025.0,dof=[0,0,1,0,0,0]):
     return (M,c)
     
 def writeOutputNemoh(M,Mainf,c,alpha,beta):
-    pathFile = './Run/Nemoh/outNemoh.dat'
+    pathFile = os.path.join(wdir,'Nemoh','outNemoh.dat')
     fid = open(pathFile,'w')
     inString = '{0:e}'
     fid.write('Mass:\t'+inString.format(M)+'\n')
@@ -217,7 +220,7 @@ def writeOutputNemoh(M,Mainf,c,alpha,beta):
     fid.close()
     
 def getPeriod():
-    pathFile = './Run/Nemoh/Fe.dat'
+    pathFile = os.path.join(wdir,'Nemoh','Fe.dat')
     with open(pathFile,'r') as f:
         irfRaw = f.readlines()
         omega = [0]*(len(irfRaw)-3)
@@ -234,7 +237,7 @@ def getAB(dof,nbody=1,sel=10):
     if sum(dof)<2:
         selDof = dof.index(1)
         # Open Radiation Coefficients    
-        pathFile = './Run/Nemoh/RadiationCoefficients.tec'
+        pathFile = os.path.join(wdir,'Nemoh','RadiationCoefficients.tec')
         with open(pathFile,'r') as f:
             irfRaw = f.readlines()
         strPat = 'body    1 in DoF   ' + str(sum(dof[0:selDof+1]))
@@ -266,7 +269,7 @@ def getAB(dof,nbody=1,sel=10):
         B = np.zeros((6,6,nrF))
         
         # Open Radiation Coefficients    
-        pathFile = './Run/Nemoh/RadiationCoefficients.tec'
+        pathFile = os.path.join(wdir,'Nemoh','RadiationCoefficients.tec')
         with open(pathFile,'r') as f:
             irfRaw = f.readlines()
         irfRaw = irfRaw[2+sum(dof)::]
@@ -300,7 +303,7 @@ def getFe(dof,sel=10,nbody=1):
     if sum(dof)<2:
         selDof = dof.index(1)
         # Open Radiation Coefficients    
-        pathFile = './Run/Nemoh/ExcitationForce.tec'
+        pathFile = os.path.join(wdir,'Nemoh','ExcitationForce.tec')
         with open(pathFile,'r') as f:
             irfRaw = f.readlines()
         strPat = 'I='
@@ -328,7 +331,7 @@ def getFe(dof,sel=10,nbody=1):
         FeAng = np.zeros((6,nrF))
         
         # Open Radiation Coefficients    
-        pathFile = './Run/Nemoh/ExcitationForce.tec'
+        pathFile = os.path.join(wdir,'Nemoh','ExcitationForce.tec')
         with open(pathFile,'r') as f:
             irfRaw = f.readlines()
         irfRaw = irfRaw[2+sum(dof)::]
@@ -373,13 +376,13 @@ def irregAB(Ma,Bhyd,omega,M,c,dof,specSS):
 def getMesh(nbody=1):
     if nbody == 1:
         # Open Radiation Coefficients    
-        pathFile = './Calculation/mesh/axisym_info.dat'
+        pathFile = os.path.join(wdir,'Calculation','mesh','axisym_info.dat')
         with open(pathFile,'r') as f:
             line = f.readlines()
             lineData = line[0].split()
             nP = int(lineData[0])
             nT = int(lineData[1])
-        pathFile = './Calculation/mesh/axisym.dat'
+        pathFile = os.path.join(wdir,'Calculation','mesh','axisym.dat')
         x = np.zeros((nP))
         y = np.zeros((nP))
         z = np.zeros((nP))
@@ -402,7 +405,7 @@ def getMesh(nbody=1):
         nT = np.zeros(nbody+1,dtype=int)
         for iB in range(nbody):
             # Open Radiation Coefficients    
-            pathFile = './Calculation/mesh/axisym{0:d}_info.dat'.format(iB+1)
+            pathFile = os.path.join(wdir,'Calculation','mesh','axisym{0:d}_info.dat'.format(iB+1))
             with open(pathFile,'r') as f:
                 line = f.readlines()
                 lineData = line[0].split()
@@ -415,7 +418,7 @@ def getMesh(nbody=1):
         trii = np.zeros((2*sum(nT),3))
         
         for iB in range(nbody):
-            pathFile = './Calculation/mesh/axisym{0:d}.dat'.format(iB+1)
+            pathFile = os.path.join(wdir,'Calculation','mesh','axisym{0:d}.dat'.format(iB+1))
             iT = 2*nT[iB]
             iL = 1
             with open(pathFile,'r') as f:
@@ -445,8 +448,9 @@ def getFS(advOps,depth,omeg,RAO):
     
     # Check for array simulation
     isArray = advOps['parkCheck']
-    if isArray and os.path.isfile('./Run/parkconfig.dat'):
-        with open('./Run/parkconfig.dat') as f:
+    parkFile = os.path.join(wdir,'Other','parkconfig.dat')
+    if isArray and os.path.isfile(parkFile):
+        with open(parkFile) as f:
             allData = f.readlines()
         nbody = int(allData[0])
     else:
@@ -463,7 +467,8 @@ def getFS(advOps,depth,omeg,RAO):
 
     # Read diffraction
     
-    with open('./Run/Nemoh/freesurface.    1.dat','r') as f:
+    fsFile = os.path.join(wdir,'Nemoh','freesurface.    1.dat')
+    with open(fsFile,'r') as f:
         allEta = f.readlines()
         
     modE1 = np.zeros(np.shape(X))
@@ -482,7 +487,8 @@ def getFS(advOps,depth,omeg,RAO):
     if nbody>1:
         for iB in range(nbody):
             spaces = " "*(5-len(str(iB+2)))
-            with open('./Run/Nemoh/freesurface.'  + spaces +  '{:d}.dat'.format(iB+2),'r') as f:
+            fsFile = os.path.join(wdir,'Nemoh','freesurface.'  + spaces +  '{:d}.dat'.format(iB+2))
+            with open(fsFile,'r') as f:
                 allEta = f.readlines()
             iL = 0
             for iX in range(np.size(X,1)):
@@ -494,7 +500,8 @@ def getFS(advOps,depth,omeg,RAO):
         phaE2 = np.angle(etaR)
     else:
         spaces = " "*(5-len(str(iMax+2)))
-        with open('./Run/Nemoh/freesurface.'  + spaces +  '{:d}.dat'.format(iMax+2),'r') as f:
+        fsFile = os.path.join(wdir,'Nemoh','freesurface.'  + spaces +  '{:d}.dat'.format(iMax+2))
+        with open(fsFile,'r') as f:
             allEta = f.readlines()
             
         iL = 0

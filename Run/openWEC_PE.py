@@ -775,6 +775,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.Y = np.zeros((4,4))
         self.etaDiff = np.zeros((4,4))
         self.etaRad = np.zeros((4,4))
+        self.wDir = os.path.join(os.path.expanduser("~"),'openWEC')
         # Set GUI
         # Mesh Tab
         MainWindow.setWindowTitle(_translate("openWEC", "openWEC", None))
@@ -931,7 +932,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         pT = ""
         if test/4 == 2:
             pT = "Grid"
-            if(os.path.isfile('./Run/Nemoh/freesurface.    1.dat')):
+            fsFile = os.path.join(self.wDir,'Nemoh','freesurface.    1.dat')
+            if(os.path.isfile(fsFile)):
                 None
             else:
                 print("Warning! No free surface was calculated with Nemoh! Plotting not possible!")
@@ -954,7 +956,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         elif test==3:
             xVar = self.freq
             yVar = self.RAO
-            xlabel = '$Frequency [s]$'
+            xlabel = '$Frequency [Hz]$'
             ylabel = '$RAO$'
         elif test==4:
             xVar = self.time
@@ -1130,8 +1132,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         box1 = mt.box(length,width,height,[-(length+spacing)/2.0,0.0,0.0])
         box2 = mt.box(length,width,height,[(length+spacing)/2.0,0.0,0.0])
         
-        mt.writeMesh(box1,'./Calculation/mesh/axisym1')
-        mt.writeMesh(box2,'./Calculation/mesh/axisym2')
+        boxFile1 = os.path.join(self.wDir,'Calculation','mesh','axisym1')
+        boxFile2 = os.path.join(self.wDir,'Calculation','mesh','axisym2')
+        mt.writeMesh(box1,boxFile1)
+        mt.writeMesh(box2,boxFile2)
         print("Meshing...")
         self.genericThread = GenericThread(ne.createMeshOpt,cG,nPanels/2,int(0),rho=float(self.rhoBox.text()),nbody=2,xG=[-(length+spacing)/2.0,(length+spacing)/2.0])
         self.genericThread.start()
@@ -1148,7 +1152,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def runNemohCode(self):
         # Delete previous results
-        folder = './Calculation/results'
+        folder = os.path.join(self.wDir,'Calculation','results')
         for fil in os.listdir(folder):
             filPath = os.path.join(folder,fil)
             if os.path.isfile(filPath):
@@ -1213,25 +1217,25 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def postNemoh(self,advOps,rhoW,depth):
         # Delete content of destination folder
-        folder = './Run/Nemoh'
+        folder = os.path.join(self.wDir,'Nemoh')
         for fil in os.listdir(folder):
             filPath = os.path.join(folder,fil)
             if os.path.isfile(filPath):
                 os.unlink(filPath)
         
         # Copy Result files to Simulation directory
-        pathName = './Calculation/results'
+        pathName = os.path.join(self.wDir,'Calculation','results')
         srcFiles = os.listdir(pathName)
         for iFile in srcFiles:
             fullFile = os.path.join(pathName,iFile)
             if(os.path.isfile(fullFile)):
-                sh.copy(fullFile,"./Run/Nemoh")
-        pathName = './Calculation/mesh'
+                sh.copy(fullFile,os.path.join(self.wDir,'Nemoh'))
+        pathName = os.path.join(self.wDir,'Calculation','mesh')
         srcFiles = os.listdir(pathName)
         for iFile in srcFiles:
             fullFile = os.path.join(pathName,iFile)
             if(os.path.isfile(fullFile)):
-                sh.copy(fullFile,"./Run/Nemoh")
+                sh.copy(fullFile,os.path.join(self.wDir,'Nemoh'))
 
         # Display results on matplotlib widgets
         sys.path.insert(0, './Run')
@@ -1357,7 +1361,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         t=self.ntbSim,xlab=xlabel,ylab=ylabel)
 
         saveName = QtGui.QFileDialog.getSaveFileName(self,
-        "Save Simulation Results","./Output","Text File (*.txt)")
+        "Save Simulation Results",os.path.join(self.wDir,"Output"),"Text File (*.txt)")
         wc.saveResults(saveName,self.time,self.posZ,self.velZ,self.Fpto)        
         
         # Calculate Produced Power
@@ -1472,7 +1476,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         
     def saveFile(self):
         fname = QtGui.QFileDialog.getSaveFileName(self, 'Save file', 
-                        './','*.pe')
+                        os.path.join(self.wDir),'*.pe')
                 
         with open(fname,'w') as f:
             # Write Mesh Tab properties

@@ -8,6 +8,10 @@ Created on Fri Feb 06 16:19:53 2015
 import processNemoh as pn
 import wecFunctions as wf
 import numpy as np
+import os
+
+wdir = os.path.join(os.path.expanduser("~"),'openWEC')
+
 
 def makeWaveFex(Hs,Tm,time,dof,wavType,Sout=False,CS=False):
 
@@ -22,7 +26,8 @@ def makeWaveFex(Hs,Tm,time,dof,wavType,Sout=False,CS=False):
 # Calculate the spectral values
     if CS:
         try:
-            data = np.loadtxt('./Run/spec.dat')
+            specFile = os.path.join(wdir,'Other','spec.dat')
+            data = np.loadtxt(specFile)
             f = data[:,0]
             s = data[:,1]
             specSS = np.interp(freqs,f,s)
