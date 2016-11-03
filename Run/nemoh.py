@@ -96,10 +96,10 @@ def createMeshOpt(cG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
         fid.write('{0:f}\n'.format(9.81))
         fid.close()
         os.chdir(os.path.join(wdir,'Calculation'))
-        if pt.system()=='Linux':
-            os.system('./meshL')
-        else:
+        if pt.system()=='Windows':
             os.system('Mesh.exe')
+        else:
+            os.system('./meshL')
         os.chdir(curPath)
     else:
         for iB in range(nbody):
@@ -115,10 +115,10 @@ def createMeshOpt(cG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
             fid.write('{0:f}\n'.format(9.81))
             fid.close()
             os.chdir(os.path.join(wdir,'Calculation'))
-            if pt.system()=='Linux':
-                os.system('./meshL')
-            else:
+            if pt.system()=='Windows':
                 os.system('Mesh.exe')
+            else:
+                os.system('./meshL')
             os.chdir(curPath)
 
 def openParkFile(fname):
@@ -266,14 +266,14 @@ def runNemoh(nbody=1):
     else:
         for iB in range(nbody):
             sh.copyfile('./mesh/axisym{:d}.dat'.format(iB+1),'axisym{:d}.dat'.format(iB+1))
-    if pt.system()=='Linux':
-        os.system('./preProc')
-        os.system('./solver')
-        os.system('./postProc')
-    else:
+    if pt.system()=='Windows':
         os.system('preProcessor.exe')
         os.system('Solver.exe')
         os.system('postProcessor.exe')
+    else:
+        os.system('./preProc')
+        os.system('./solver')
+        os.system('./postProc')
     os.chdir(curDir)
 
 
