@@ -98,6 +98,8 @@ def createMeshOpt(cG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
         os.chdir(os.path.join(wdir,'Calculation'))
         if pt.system()=='Windows':
             os.system('Mesh.exe')
+        elif pt.system()=='Darwin':
+            os.system('./meshO')
         else:
             os.system('./meshL')
         os.chdir(curPath)
@@ -117,6 +119,8 @@ def createMeshOpt(cG,nPanels,nsym,rho=1025.0,g=9.81,nbody=1,xG=0.0):
             os.chdir(os.path.join(wdir,'Calculation'))
             if pt.system()=='Windows':
                 os.system('Mesh.exe')
+            elif pt.system()=='Darwin':
+                os.system('./meshO')
             else:
                 os.system('./meshL')
             os.chdir(curPath)
@@ -270,6 +274,10 @@ def runNemoh(nbody=1):
         os.system('preProcessor.exe')
         os.system('Solver.exe')
         os.system('postProcessor.exe')
+    elif pt.system()=='Darwin':
+        os.system('./preProcO')
+        os.system('./solverO')
+        os.system('./postProcO')
     else:
         os.system('./preProc')
         os.system('./solver')

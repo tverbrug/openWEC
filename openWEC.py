@@ -211,12 +211,16 @@ class Ui_introScreen(QtGui.QMainWindow):
         shutil.copy('./Calculation/Mesh.cal',calcname)
         shutil.copy('./Calculation/Nemoh.cal',calcname)
         shutil.copy('./Calculation/postProc',calcname)
+        shutil.copy('./Calculation/postProcO',calcname)
         shutil.copy('./Calculation/meshL',calcname)
+        shutil.copy('./Calculation/meshO',calcname)
         shutil.copy('./Calculation/solver',calcname)
+        shutil.copy('./Calculation/solverO',calcname)
         shutil.copy('./Calculation/postProcessor.exe',calcname)
         shutil.copy('./Calculation/ID.dat',calcname)
         shutil.copy('./Calculation/Mesh.exe',calcname)
         shutil.copy('./Calculation/preProc',calcname)
+        shutil.copy('./Calculation/preProcO',calcname)
         shutil.copy('./Run/spec_test.dat',othername)
         shutil.copy('./Mooring/lines_template.txt',mooringname)
         shutil.copy('./Mooring/lines.txt',mooringname)
@@ -225,6 +229,10 @@ class Ui_introScreen(QtGui.QMainWindow):
         os.chmod(os.path.join(calcname,'preProc'),stat.S_IRWXU)
         os.chmod(os.path.join(calcname,'solver'),stat.S_IRWXU)
         os.chmod(os.path.join(calcname,'postProc'),stat.S_IRWXU)
+        os.chmod(os.path.join(calcname,'meshO'),stat.S_IRWXU)
+        os.chmod(os.path.join(calcname,'preProcO'),stat.S_IRWXU)
+        os.chmod(os.path.join(calcname,'solverO'),stat.S_IRWXU)
+        os.chmod(os.path.join(calcname,'postProcO'),stat.S_IRWXU)
         
       
     def openWS(self):
